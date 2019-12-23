@@ -28,7 +28,7 @@ module.exports = appInfo => {
       },
     },
   };
-
+  config.proxyTarget = 'http://127.0.0.1:8888';
   config.wework = {
     accessToken: {
       xd: '',
