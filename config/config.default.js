@@ -29,8 +29,32 @@ module.exports = appInfo => {
     },
   };
 
+  config.wework = {
+    accessToken: {
+      xd: '',
+      xdg: '',
+      tap: '',
+    },
+    corpID: {
+      xd: '',
+      xdg: '',
+      tap: '',
+    },
+    agentID: {
+      xd: '',
+      xdg: '',
+      tap: '',
+    },
+  };
+  config.mongoose = {
+    client: {
+      url: 'mongodb://127.0.0.1/example',
+      options: {},
+    },
+  };
   return {
     ...config,
     ...userConfig,
   };
+
 };
