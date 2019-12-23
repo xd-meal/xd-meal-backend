@@ -6,7 +6,7 @@ const proxy = httpProxy.createProxyServer({});
 
 class ProxyController extends Controller {
   async index() {
-    proxy.web(this.ctx.request, this.ctx.response, { target: this.config.proxyTarget });
+    proxy.web(this.ctx.request.req, this.ctx.response.res, { target: this.config.proxyTarget });
   }
 }
 
