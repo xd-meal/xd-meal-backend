@@ -21,6 +21,12 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    // TODO: 为了安全起见应当开启，但是这里暂时只是做代理，暂不开启
+    security: {
+      csrf: {
+        enable: false,
+      },
+    },
   };
 
   return {
