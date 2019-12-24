@@ -38,6 +38,7 @@ module.exports = appInfo => {
       password: 'auth',
       db: 0,
     },
+    agent: true,
   };
   config.wework = {
     accessToken: {
