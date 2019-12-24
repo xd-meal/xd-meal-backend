@@ -31,6 +31,16 @@ module.exports = app => {
     department: {
       type: String,
     },
+    createTime: {
+      type: Date,
+      default: Date.now,
+    },
+    updateTime: {
+      type: Date,
+      default: Date.now,
+    },
+  }, {
+    timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' },
   });
   return mongoose.model('User', UserSchema, 'user');
 };

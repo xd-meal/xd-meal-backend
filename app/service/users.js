@@ -8,6 +8,17 @@ const commonFilter = {
 };
 
 class UsersService extends Service {
+  async checkLogin(params) {
+    const ctx = this.ctx;
+    try {
+      await ctx.model.User.findOne({
+        email: params.email,
+        password: params.params,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async create(params) {
     const ctx = this.ctx;
     // 用户名约束
@@ -38,16 +49,6 @@ class UsersService extends Service {
     return await ctx.model.User.find({}, commonFilter).limit(2000);
   }
 
-  filterParams(params, rule) {
-    const keys = Object.keys(rule);
-    const data = {};
-    for (const key of keys) {
-      if (params[key]) {
-        data[key] = params[key];
-      }
-    }
-    return data;
-  }
 }
 
 module.exports = UsersService;

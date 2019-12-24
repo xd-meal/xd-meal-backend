@@ -1,6 +1,8 @@
 'use strict';
 
 const Controller = require('egg').Controller;
+const filterParams = require('../helper/filter');
+
 const createRule = {
   username: 'string',
   password: 'string',
@@ -12,13 +14,24 @@ const createRule = {
 
 const editRule = createRule;
 
+const loginRule = {
+  email: 'string',
+  password: 'string',
+};
+
 class UsersController extends Controller {
-  login() {
-    const app = this.ctx.app;
+  async login() {
+    const ctx = this.ctx;
+    const app = ctx.app;
     const option = {
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2,
     };
+    const userService = ctx.service.users;
+    const params = filterParams(ctx.request.body, createRule);
+    ctx.validate(loginRule, params);
+    await userService.checkLogin(params);
+
     const token = app.jwt.sign(option, app.config.jwt.secret);
     this.ctx.body = { token };
   }
@@ -30,7 +43,7 @@ class UsersController extends Controller {
   async create() {
     const ctx = this.ctx;
     const userService = ctx.service.users;
-    const params = userService.filterParams(ctx.request.body, createRule);
+    const params = filterParams(ctx.request.body, createRule);
     ctx.validate(createRule, params);
     ctx.body = await userService.create(params);
   }
@@ -41,7 +54,9 @@ class UsersController extends Controller {
   //
   async edit() {
     const ctx = this.ctx;
+    // const userService = ctx.service.users;
     ctx.validate(editRule);
+    const params = filterParams(ctx.request.body, createRule);
     ctx.body = await ctx.service.users.update(ctx.request.body);
   }
   //
