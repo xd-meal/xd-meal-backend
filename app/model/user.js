@@ -6,16 +6,29 @@ module.exports = app => {
     username: {
       type: String,
     },
+    psw_salt: {
+      type: String,
+    },
     password: {
       type: String,
     },
     wework_userid: {
       type: String,
     },
-    corp: {
+    wechat_corpid: {
       type: String,
     },
     email: {
+      type: String,
+      unique: true,
+    },
+    avatar: {
+      type: String,
+    },
+    role: {
+      type: Number,
+    },
+    department: {
       type: String,
     },
   });
