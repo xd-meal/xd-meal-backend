@@ -5,6 +5,7 @@ module.exports = app => {
   const UserSchema = new Schema({
     username: {
       type: String,
+      trim: true,
     },
     psw_salt: {
       type: String,
@@ -21,6 +22,11 @@ module.exports = app => {
     email: {
       type: String,
       unique: true,
+      trim: true,
+      index: {
+        unique: true,
+        partialFilterExpression: { email: { $type: 'string' } },
+      },
     },
     avatar: {
       type: String,
