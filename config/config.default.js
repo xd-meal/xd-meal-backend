@@ -31,6 +31,14 @@ module.exports = appInfo => {
       enable: true,
     },
   };
+  config.redis = {
+    client: {
+      port: 6379, // Redis port
+      host: '127.0.0.1', // Redis host
+      password: 'auth',
+      db: 0,
+    },
+  };
   config.wework = {
     accessToken: {
       xd: '',
