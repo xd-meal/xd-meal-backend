@@ -3,22 +3,48 @@ const Service = require('egg').Service;
 const HttpError = require('../helper/error');
 
 const commonFilter = {
-  _id: 0,
   __v: 0,
 };
 
 class UsersService extends Service {
   async checkLogin(params) {
     const ctx = this.ctx;
+    let user = null;
     try {
-      await ctx.model.User.findOne({
+      user = await ctx.model.User.findOne({
         email: params.email,
-        password: params.params,
+        password: params.password,
       });
     } catch (error) {
       console.log(error);
     }
+    return user;
   }
+
+  /**
+   * @description 判断用户是否是admin，如果不是 admin 直接跑出异常并终止程序，调用时请注意
+   * @return {Promise<void>} 无返回值
+   */
+  async isAdmin() {
+    const ctx = this.ctx;
+    const app = ctx.app;
+    const parts = ctx.get('Authorization').split(' ');
+    const data = app.jwt.decode(parts[1]);
+    const id = data.sub;
+    const user = await ctx.model.User.findById(id);
+    if (user.role !== 2) {
+      throw new HttpError({
+        code: 403,
+        msg: 'No Permission',
+      });
+    }
+  }
+
+  /**
+   * @description 创建一个对象，调用此接口前，首先保证当前用户拥有 admin 权限
+   * @param {User} params 用户信息，至少包含 name 和 password
+   * @return {Promise<User>} 返回创建的用户实体
+   */
   async create(params) {
     const ctx = this.ctx;
     // 用户名约束
@@ -44,11 +70,23 @@ class UsersService extends Service {
     });
   }
 
+  /**
+   * @description 请注意此接口请求全表，请注意不要频繁调用，请让前端缓存数据
+   * @return {Promise<User[]>} 用户列表
+   */
   async list() {
     const ctx = this.ctx;
     return await ctx.model.User.find({}, commonFilter).limit(2000);
   }
 
+  async update(params, id) {
+    const ctx = this.ctx;
+    return await ctx.model.User.findByIdAndUpdate(id, {
+      ...params,
+    }, {
+      fields: commonFilter,
+    });
+  }
 }
 
 module.exports = UsersService;
