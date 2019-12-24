@@ -87,6 +87,13 @@ class UsersService extends Service {
       fields: commonFilter,
     });
   }
+
+  async updateList(userList) {
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    const list = userModel.insertMany(userList);
+    return list;
+  }
 }
 
 module.exports = UsersService;
