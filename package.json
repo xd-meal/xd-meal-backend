@@ -13,6 +13,8 @@
     "egg-mongoose": "^3.2.0",
     "egg-redis": "^2.4.0",
     "egg-scripts": "^2.11.0",
+    "egg-session-redis": "^2.1.0",
+    "egg-userrole": "^2.1.0",
     "egg-validate": "^2.0.2",
     "koa-server-http-proxy": "^0.1.0"
   },

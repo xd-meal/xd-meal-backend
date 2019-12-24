@@ -25,4 +25,12 @@ module.exports = {
     enable: true,
     package: 'egg-redis',
   },
+  userrole: {
+    enable: true,
+    package: 'egg-userrole',
+  },
+  sessionRedis: {
+    enable: true,
+    package: 'egg-session-redis',
+  },
 };
