@@ -10,7 +10,7 @@ const userImportRule = {
     rule: {
       username: 'string',
       department: 'string',
-      corp: 'string',
+      corp: { type: 'string', required: false },
       email: 'string',
     },
   },
@@ -51,7 +51,7 @@ class AdminController extends Controller {
     const userService = ctx.service.users;
     const params = filterParams(ctx.request.body, userImportRule);
     ctx.validate(userImportRule, params);
-    ctx.body = await userService.updateList(params.list);
+    ctx.body = await userService.importList(params.list);
   }
 
   // 获取餐品列表

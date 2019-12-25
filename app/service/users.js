@@ -88,7 +88,7 @@ class UsersService extends Service {
     });
   }
 
-  async updateList(users) {
+  async importList(users) {
     const ctx = this.ctx;
     const userModel = ctx.model.User;
     const inserts = [];
@@ -98,23 +98,27 @@ class UsersService extends Service {
     try {
       for (const user of users) {
         const queryExecution = {
-          insertOne: {
-            document: {
-              username: user.username,
-              department: user.department,
-              email: user.email,
-            },
-          },
+          username: user.username,
+          department: user.department,
+          email: user.email,
         };
         inserts.push(queryExecution);
       }
-      res = await userModel.bulkWrite(inserts);
+      res = await userModel.insertMany(inserts, { session });
       await session.commitTransaction();
       session.endSession();
     } catch (e) {
       await session.abortTransaction();
       session.endSession();
-      throw e;
+      switch (e.code) {
+        case 11000:
+          throw new HttpError({
+            code: 403,
+            msg: '存在重复email',
+          });
+        default:
+          throw e;
+      }
     }
     return res;
   }
