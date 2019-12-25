@@ -87,6 +87,37 @@ class UsersService extends Service {
       fields: commonFilter,
     });
   }
+
+  async updateList(users) {
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    const inserts = [];
+    const session = await userModel.startSession();
+    let res;
+    session.startTransaction();
+    try {
+      for (const user of users) {
+        const queryExecution = {
+          insertOne: {
+            document: {
+              username: user.username,
+              department: user.department,
+              email: user.email,
+            },
+          },
+        };
+        inserts.push(queryExecution);
+      }
+      res = await userModel.bulkWrite(inserts);
+      await session.commitTransaction();
+      session.endSession();
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+    return res;
+  }
 }
 
 module.exports = UsersService;
