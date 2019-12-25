@@ -1,13 +1,13 @@
 'use strict';
 const Service = require('egg').Service;
 const HttpError = require('../helper/error');
-
+const crypto = require('crypto');
 const commonFilter = {
   __v: 0,
 };
 
 class UsersService extends Service {
-  async checkLogin(params) {
+  async passwordLogin(params) {
     const ctx = this.ctx;
     let user = null;
     try {
@@ -55,16 +55,34 @@ class UsersService extends Service {
       });
     }
     // 密码约束
-    if (params.password.length < 8 || params.password.length >= 22) {
+    if (!(params.email && params.password) && !params.wework_userid) {
       throw new HttpError({
         code: 403,
-        msg: '密码长度必须为8-21字符',
+        msg: '用户必须拥有一项登陆方式',
       });
     }
-    // TODO: psw 需要掺最少 32位 salt 保存
-    // TODO: psw 可以选用 Bcrypt 加密密码
-    // TODO: 严格校验 psw 和 username
-    // TODO: 严格校验 email 格式（如果有的话）
+    if (params.password) {
+      if (params.password.length < 8 || params.password.length >= 22) {
+        throw new HttpError({
+          code: 403,
+          msg: '密码长度必须为8-21字符',
+        });
+      }
+      const hash = crypto.createHash('md5');
+      hash.update(Date.now().toString() + parseInt(Math.random() * 100000).toString());
+      params.psw_salt = hash.digest('hex');
+      hash.update(params.password + params.psw_salt);
+      params.password = hash.digest('hex');
+    }
+    if (params.email) {
+      const _emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+      if (!_emailRegex.test(params.email)) {
+        throw new HttpError({
+          code: 403,
+          msg: '邮箱不符合规范',
+        });
+      }
+    }
     return await ctx.model.User.create({
       ...params,
     });
