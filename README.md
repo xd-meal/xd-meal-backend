@@ -1,33 +1,11 @@
 # xd-meal-backend
 
+##  项目依赖
 
+### redis
 
-## QuickStart
+可以使用命令  `redis-server` 启动 redis
 
-<!-- add docs here for user -->
+### mongodb
 
-see [egg docs][egg] for more detail.
-
-### Development
-
-```bash
-$ npm i
-$ npm run dev
-$ open http://localhost:7001/
-```
-
-### Deploy
-
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+mongodb 需要使用 run-rs 方式运行，所以这里可以使用预制的 yarn dbStart 命令启动

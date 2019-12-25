@@ -16,3 +16,4 @@ config/*.local.js
 config/*.prod.js
 
 data
+dump.rdb
