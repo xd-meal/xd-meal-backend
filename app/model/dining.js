@@ -2,6 +2,22 @@
 module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = mongoose.Schema;
+  const DiningMenuItemSchema = new Schema(
+    {
+      _id: {
+        type: Schema.Types.ObjectId,
+      },
+      title: {
+        type: String,
+      },
+      desc: {
+        type: String,
+      },
+      supplier: {
+        type: String,
+      },
+    }
+  );
   const DiningSchema = new Schema({
     order_start: {
       type: Date,
@@ -20,7 +36,7 @@ module.exports = app => {
       type: Number,
     },
     menu: {
-      type: String,
+      type: [ DiningMenuItemSchema ],
     },
 
     createTime: {

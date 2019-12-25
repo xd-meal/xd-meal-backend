@@ -4,13 +4,13 @@ module.exports = app => {
   const Schema = mongoose.Schema;
   const OrderSchema = new Schema({
     uid: {
-      type: String,
+      type: Schema.Types.ObjectId,
     },
     dining_id: {
-      type: String,
+      type: Schema.Types.ObjectId,
     },
     menu_id: {
-      type: String,
+      type: Schema.Types.ObjectId,
     },
     createTime: {
       type: Date,

@@ -74,7 +74,7 @@ class UsersService extends Service {
    * @description 请注意此接口请求全表，请注意不要频繁调用，请让前端缓存数据
    * @return {Promise<User[]>} 用户列表
    */
-  async list() {
+  async findAllUsers() {
     const ctx = this.ctx;
     return await ctx.model.User.find({}, commonFilter).limit(2000);
   }
