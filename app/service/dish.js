@@ -26,11 +26,11 @@ class DishService extends Service {
   async updateDish(dish, id) {
     const ctx = this.ctx;
     const dishModel = ctx.model.Dish;
-    return await dishModel.findByIdAndUpdate(id, {
+    return dishModel.findByIdAndUpdate(id, {
       title: dish.title,
       desc: dish.desc,
       supplier: dish.supplier,
-    });
+    }, { new: true });
   }
 }
 

@@ -84,34 +84,37 @@ class AdminController extends Controller {
     });
   }
 
-  // 增加餐次
+  // 增加餐次 POST /admin/dining
   async newDining() {
     const ctx = this.ctx;
     const diningService = ctx.service.dining;
     const params = filterParams(ctx.request.body, addNewDiningRule);
     ctx.validate(addNewDiningRule, params);
-    return await diningService.addNewDining(params);
+    ctx.body = await diningService.addNewDining(params);
   }
 
-  // 更新餐次
+  // 更新餐次 PUt /admin/dining/:id
   async updateDining() {
     const ctx = this.ctx;
     const diningService = ctx.service.dining;
     const id = ctx.params.id;
     const params = filterParams(ctx.request.body, addNewDiningRule);
     ctx.validate(updateDiningRule, params);
-    await diningService.updateDining(params, id);
+    ctx.body = await diningService.updateDining(params, id);
   }
 
-  // 按id列表删除餐次
-  async deleteDiningByIds() {
+  // 按id列表删除餐次 DELETE /admin/dinings/:id
+  async deleteDiningById() {
     const ctx = this.ctx;
     const diningService = ctx.service.dining;
     const id = ctx.params.id;
     await diningService.deleteDiningById(id);
+    ctx.body = {
+      id,
+    };
   }
 
-  // 查询用户列表
+  // 查询用户列表 GET /admin/users
   async users() {
     const ctx = this.ctx;
     const userService = ctx.service.users;
@@ -123,11 +126,17 @@ class AdminController extends Controller {
     const ctx = this.ctx;
     const startTime = ctx.params.startTime;
     const endTime = ctx.params.endTime;
-    const userService = ctx.service.users;
+    const orderService = ctx.service.order;
     const params = filterParams(ctx.request.body, findOrderByUserIdAndTimeRule);
+    await orderService.findOrderByUserIdAndTimeRule({
+      id: params.id,
+      startTime,
+      endTime,
+    });
+
   }
 
-  // 修改餐品接口
+  // 修改餐品接口 PUT /admin/dish/:id
   async updateDish() {
     const ctx = this.ctx;
     const dishService = ctx.service.dish;

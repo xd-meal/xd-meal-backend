@@ -18,8 +18,8 @@ module.exports = app => {
   router.get('/admin/dining/:startTime/:endTime', controller.admin.diningByTime);
   router.post('/admin/dining', controller.admin.newDining);
   router.put('/admin/dining/:id', controller.admin.updateDining);
-  router.delete('/admin/dinings', controller.admin.deleteDiningByIds);
+  router.delete('/admin/dining/:id', controller.admin.deleteDiningById);
   router.get('/admin/users', controller.admin.users);
   router.get('/admin/order/:startTime/:endTime', controller.admin.orderByUserIdAndTime);
-  router.get('/admin/dish/:id', controller.admin.updateDish);
+  router.put('/admin/dish/:id', controller.admin.updateDish);
 };
