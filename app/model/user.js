@@ -23,10 +23,7 @@ module.exports = app => {
       type: String,
       unique: true,
       trim: true,
-      index: {
-        unique: true,
-        partialFilterExpression: { email: { $type: 'string' } },
-      },
+      sparse: true,
     },
     avatar: {
       type: String,
