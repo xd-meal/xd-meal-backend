@@ -28,10 +28,10 @@ const updateDishRule = {
 };
 
 const addNewDiningRule = {
-  order_start: 'string',
-  order_end: 'string',
-  pick_start: 'string',
-  pick_end: 'string',
+  order_start: 'number',
+  order_end: 'number',
+  pick_start: 'number',
+  pick_end: 'number',
   stat_type: { type: 'enum', values: [ 0, 1 ] },
   menu: {
     type: 'array',
@@ -45,7 +45,7 @@ const findOrderByUserIdAndTimeRule = {
   userId: 'string',
 };
 class AdminController extends Controller {
-  // csv 导入 POST
+  // csv 导入 POST /admin/user/list
   async userList() {
     const ctx = this.ctx;
     const userService = ctx.service.users;
@@ -54,7 +54,7 @@ class AdminController extends Controller {
     ctx.body = await userService.importList(params.list);
   }
 
-  // 获取餐品列表
+  // 获取餐品列表 GET /admin/dish/list
   async dishList() {
     const ctx = this.ctx;
     const dishService = ctx.service.dish;
@@ -62,16 +62,16 @@ class AdminController extends Controller {
     ctx.body = await dishService.dishList();
   }
 
-  // 添加餐品接口
+  // 添加餐品接口 POST /admin/dish
   async newDish() {
     const ctx = this.ctx;
     const dishService = ctx.service.dish;
     const params = filterParams(ctx.request.body, addNewDishRule);
     ctx.validate(addNewDishRule, params);
-    ctx.body = await dishService.addDish();
+    ctx.body = await dishService.addDish(params);
   }
 
-  // 获取指定时间区间的餐次列表
+  // 获取指定时间区间的餐次列表 GET /admin/dining/:startTime/:endTime
   async diningByTime() {
     const ctx = this.ctx;
     const startTime = ctx.params.startTime;
@@ -88,10 +88,9 @@ class AdminController extends Controller {
   async newDining() {
     const ctx = this.ctx;
     const diningService = ctx.service.dining;
-
     const params = filterParams(ctx.request.body, addNewDiningRule);
     ctx.validate(addNewDiningRule, params);
-    await diningService.addNewDining(params);
+    return await diningService.addNewDining(params);
   }
 
   // 更新餐次

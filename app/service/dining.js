@@ -36,10 +36,11 @@ class DiningService extends Service {
   async addNewDining(ding) {
     const ctx = this.ctx;
     const DiningModel = ctx.model.Dining;
-    const findList = ding.menu(item => ({
+    const DishModel = ctx.model.Dish;
+    const findList = ding.menu.map(item => ({
       _id: item,
     }));
-    const res = await DiningModel.find({
+    const res = await DishModel.find({
       $or: findList,
     }, commonFilter);
     if (res.length !== findList.length) {

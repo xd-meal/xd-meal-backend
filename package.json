@@ -16,7 +16,8 @@
     "egg-session-redis": "^2.1.0",
     "egg-userrole": "^2.1.0",
     "egg-validate": "^2.0.2",
-    "koa-server-http-proxy": "^0.1.0"
+    "koa-server-http-proxy": "^0.1.0",
+    "run-rs": "^0.6.2"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -40,7 +41,8 @@
     "cov": "egg-bin cov",
     "lint": "eslint .",
     "ci": "npm run lint && npm run cov",
-    "autod": "autod"
+    "autod": "autod",
+    "dbStart": "run-rs --mongod --dbpath ./data --keep"
   },
   "ci": {
     "version": "10"
