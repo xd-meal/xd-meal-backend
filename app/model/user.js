@@ -45,5 +45,6 @@ module.exports = app => {
   }, {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' },
   });
+  UserSchema.index({ wework_userid: 1, wechat_corpid: 1 }, { unique: true });
   return mongoose.model('User', UserSchema, 'user');
 };
