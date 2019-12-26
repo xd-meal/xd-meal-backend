@@ -21,7 +21,9 @@ class WeWorkService extends Service {
     }
     const redis = this.ctx.app.redis;
     const wework = config.wework;
-    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=' + wework.corpID[corp] + '&corpsecret=' + wework.secret[corp]);
+    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=' + wework.corpID[corp] + '&corpsecret=' + wework.secret[corp], {
+      dataType: 'json',
+    });
     if (result.data.errcode) {
       throw new HttpError({
         code: 403,
@@ -34,7 +36,9 @@ class WeWorkService extends Service {
   }
   async getUserID(code, corp) {
     const accessToken = await this.getAccessToken(corp);
-    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + accessToken + '&code=' + code);
+    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + accessToken + '&code=' + code, {
+      dataType: 'json',
+    });
     if (result.data.errcode) {
       throw new HttpError({
         code: 403,
@@ -46,7 +50,9 @@ class WeWorkService extends Service {
   }
   async getUserInfo(userid, corp) {
     const accessToken = await this.getAccessToken(corp);
-    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=' + accessToken + '&userid=' + userid);
+    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=' + accessToken + '&userid=' + userid, {
+      dataType: 'json',
+    });
     if (result.data.errcode) {
       throw new HttpError({
         code: 403,
