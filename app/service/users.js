@@ -1,31 +1,47 @@
 'use strict';
 const Service = require('egg').Service;
 const HttpError = require('../helper/error');
-const crypto = require('crypto');
+const sha256 = require('crypto-js/sha256');
 const commonFilter = {
   __v: 0,
 };
+const chrList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const _emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
+function randomString(length, chars) {
+  let result = '';
+  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+function pswEncode(str, pswSalt, confSalt = '') {
+  return sha256(str + pswSalt + confSalt);
+}
 class UsersService extends Service {
-  async passwordLogin(params) {
+  async passwordLogin(setting) {
+    const { password, email } = setting;
     const ctx = this.ctx;
-    let user = null;
-    try {
-      user = await ctx.model.User.findOne({
-        email: params.email,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-    const hash = crypto.createHash('md5');
-    hash.update(params.password + user.psw_salt);
-    if (user.password !== hash.digest('hex')) {
+    const userModel = ctx.model.User;
+    // 先查 email
+    const user = await userModel.findOne({
+      email,
+    }, commonFilter);
+    if (!user) {
       throw new HttpError({
         code: 403,
-        msg: '邮箱或密码错误',
+        msg: '用户名或密码错误',
       });
     }
-    return user;
+    const pswSalt = user.psw_salt;
+    const psw = user.password;
+    const encodePsw = pswEncode(password, pswSalt).toString();
+    if (psw === encodePsw) {
+      ctx.session.userId = user._id;
+      return user;
+    }
+    throw new HttpError({
+      code: 403,
+      msg: '用户名或密码错误',
+    });
   }
 
   async weworkLogin(userid, corp) {
@@ -86,41 +102,39 @@ class UsersService extends Service {
 
   /**
    * @description 创建一个对象，调用此接口前，首先保证当前用户拥有 admin 权限
-   * @param {User} params 用户信息，至少包含 name 和 password
+   * @param {User} user 用户信息，至少包含 name 和 password
    * @return {Promise<User>} 返回创建的用户实体
    */
-  async create(params) {
+  async create(user) {
     const ctx = this.ctx;
     // 用户名约束
-    if (params.username.length >= 22) {
+    if (user.username.length >= 22) {
       throw new HttpError({
         code: 403,
         msg: '用户名长度必须为22字符以内',
       });
     }
     // 密码约束
-    if (!(params.email && params.password) && !params.wework_userid) {
+    if (!(user.email && user.password) && !user.wework_userid) {
       throw new HttpError({
         code: 403,
         msg: '用户必须拥有一项登陆方式',
       });
     }
-    if (params.password) {
-      if (params.password.length < 8 || params.password.length >= 22) {
+    if (user.password) {
+      if (user.password.length < 8 || user.password.length >= 22) {
         throw new HttpError({
           code: 403,
           msg: '密码长度必须为8-21字符',
         });
       }
-      const hash = crypto.createHash('md5');
-      hash.update(Date.now().toString() + parseInt(Math.random() * 100000).toString());
-      params.psw_salt = hash.digest('hex');
-      hash.update(params.password + params.psw_salt);
-      params.password = hash.digest('hex');
+      const psw = user.password;
+      const pswHash = randomString(32, chrList);
+      user.password = pswEncode(psw, pswHash);
+      user.psw_salt = pswHash;
     }
-    if (params.email) {
-      const _emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-      if (!_emailRegex.test(params.email)) {
+    if (user.email) {
+      if (!_emailRegex.test(user.email)) {
         throw new HttpError({
           code: 403,
           msg: '邮箱不符合规范',
@@ -128,7 +142,7 @@ class UsersService extends Service {
       }
     }
     return await ctx.model.User.create({
-      ...params,
+      ...user,
     });
   }
 
@@ -154,19 +168,32 @@ class UsersService extends Service {
     const ctx = this.ctx;
     const userModel = ctx.model.User;
     const inserts = [];
+    const backRes = [];
     const session = await userModel.startSession();
-    let res;
     session.startTransaction();
     try {
       for (const user of users) {
+        if (user.password.length <= 6) {
+          user.password = '';
+        }
+        const psw = user.password ? user.password : randomString(16, chrList);
+        const pswHash = randomString(32, chrList);
         const queryExecution = {
           username: user.username,
           department: user.department,
           email: user.email,
+          password: pswEncode(psw, pswHash),
+          psw_salt: pswHash,
         };
+
+        backRes.push({
+          email: user.email,
+          password: psw,
+        });
+
         inserts.push(queryExecution);
       }
-      res = await userModel.insertMany(inserts, { session });
+      await userModel.insertMany(inserts, { session });
       await session.commitTransaction();
       session.endSession();
     } catch (e) {
@@ -182,7 +209,7 @@ class UsersService extends Service {
           throw e;
       }
     }
-    return res;
+    return backRes;
   }
 }
 
