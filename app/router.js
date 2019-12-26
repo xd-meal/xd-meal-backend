@@ -9,6 +9,7 @@ module.exports = app => {
 
   // login
   router.post('/api/user/login', controller.users.login);
+  router.get('/api/user/wework', controller.users.wework);
 
   // admin
   router.post('/admin/user/list', controller.admin.userList);
