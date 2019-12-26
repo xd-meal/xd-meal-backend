@@ -36,7 +36,7 @@ module.exports = appInfo => {
     agent: true,
   };
   config.wework = {
-    accessToken: {
+    secret: {
       xd: '',
       xdg: '',
       tap: '',
