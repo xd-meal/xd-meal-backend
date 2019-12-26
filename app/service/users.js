@@ -13,7 +13,28 @@ class UsersService extends Service {
     try {
       user = await ctx.model.User.findOne({
         email: params.email,
-        password: params.password,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    const hash = crypto.createHash('md5');
+    hash.update(params.password + user.psw_salt);
+    if (user.password !== hash.digest('hex')) {
+      throw new HttpError({
+        code: 403,
+        msg: '邮箱或密码错误',
+      });
+    }
+    return user;
+  }
+
+  async weworkLogin(userid, corp) {
+    const ctx = this.ctx;
+    let user = null;
+    try {
+      user = await ctx.model.User.findOne({
+        wework_userid: userid,
+        wechat_corpid: corp,
       });
     } catch (error) {
       console.log(error);
@@ -38,6 +59,17 @@ class UsersService extends Service {
         msg: 'No Permission',
       });
     }
+  }
+
+  /**
+   * @description 判断用户是否已登录
+   * @return {Boolean} 是否已登录
+   */
+  async isLoggedIn() {
+    if (this.ctx.session.user) {
+      return true;
+    }
+    return false;
   }
 
   /**

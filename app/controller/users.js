@@ -27,10 +27,21 @@ const loginRule = {
   password: 'string',
 };
 
+const weworkRule = {
+  corp: 'string',
+  code: 'string',
+};
+
 class UsersController extends Controller {
   async login() {
     const ctx = this.ctx;
     const userService = ctx.service.users;
+    if (userService.isLoggedIn()) {
+      throw new HttpError({
+        code: 403,
+        msg: '已登录',
+      });
+    }
     const params = filterParams(ctx.request.body, createRule);
     ctx.validate(loginRule, params);
     const user = await userService.passwordLogin(params);
@@ -56,18 +67,43 @@ class UsersController extends Controller {
       });
     }
   }
-  //
-  // async show(){
-  //
-  // }
-  //
-  // async update() {
-  //
-  // }
-  //
-  // async destroy() {
-  //
-  // }
+
+  async wework() {
+    const ctx = this.ctx;
+    const userService = ctx.service.users;
+    if (userService.isLoggedIn()) {
+      throw new HttpError({
+        code: 403,
+        msg: '已登录',
+      });
+    }
+    const params = filterParams(ctx.request.body, weworkRule);
+    if (!this.config.wework || !this.config.wework.accessToken || !this.config.wework.accessToken[params.corp]) {
+      throw new HttpError({
+        code: 403,
+        msg: '未配置企业微信或请求无效',
+      });
+    }
+    const accessToken = this.config.wework.accessToken[params.corp];
+    const result = await ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + accessToken + '&code=' + params.code);
+    if (!result.data.errcode && result.data.UserId) {
+      const userid = result.data.UserId;
+      const user = await userService.weworkLogin(userid, params.corp);
+      if (!user) {
+        // Create user by wework
+      }
+      ctx.session.user = user;
+      ctx.body = {
+        code: 200,
+        msg: '登录成功',
+      };
+    } else if (!result.data.errcode && result.data.OpenId) {
+      ctx.body = { code: -1, msg: 'user not corp member' };
+    } else {
+      ctx.body = JSON.parse(result.data);
+    }
+
+  }
 }
 
 module.exports = UsersController;
