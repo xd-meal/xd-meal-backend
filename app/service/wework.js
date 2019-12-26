@@ -46,7 +46,7 @@ class WeWorkService extends Service {
         data: result.data,
       });
     }
-    return result.data.UserID;
+    return result.data.UserId;
   }
   async getUserInfo(userid, corp) {
     const accessToken = await this.getAccessToken(corp);
