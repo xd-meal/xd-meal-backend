@@ -71,7 +71,7 @@ class UsersController extends Controller {
         msg: '已登录',
       });
     }
-    const params = filterParams(ctx.request.queries, weworkRule);
+    const params = filterParams(ctx.request.query, weworkRule);
     if (!config.wework || !config.wework.secret || !config.wework.secret[params.corp]) {
       throw new HttpError({
         code: 403,
