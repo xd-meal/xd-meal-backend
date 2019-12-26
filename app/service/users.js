@@ -65,7 +65,7 @@ class UsersService extends Service {
    * @description 判断用户是否已登录
    * @return {Boolean} 是否已登录
    */
-  async isLoggedIn() {
+  isLoggedIn() {
     if (this.ctx.session.user) {
       return true;
     }
