@@ -7,12 +7,8 @@ module.exports = app => {
   const { router, controller } = app;
   router.get('/', controller.home.index);
 
-  router.post('/api/user/login', controller.users.login);
-  router.resources('user', '/api/admin/users', controller.users);
-
   // login
-  router.post('/api/user/wework', controller.wework.login);
-  router.post('/user/login', controller.user.login);
+  router.post('/api/user/login', controller.users.login);
 
   // admin
   router.post('/admin/user/list', controller.admin.userList);

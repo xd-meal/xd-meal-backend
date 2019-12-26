@@ -13,15 +13,6 @@ const createRule = {
   department: { type: 'string', required: true },
 };
 
-const editRule = {
-  username: { type: 'string', required: false },
-  password: { type: 'string', required: false },
-  email: { type: 'string', required: false },
-  avatar: { type: 'string', required: false },
-  role: { type: 'enum', values: [ 0, 1, 2 ], required: false },
-  department: { type: 'string', required: false },
-};
-
 const loginRule = {
   email: 'string',
   password: 'string',
