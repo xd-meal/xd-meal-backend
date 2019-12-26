@@ -21,15 +21,39 @@ class WeWorkService extends Service {
     const redis = this.ctx.app.redis;
     const wework = this.config.wework;
     const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=' + wework.corpID[corp] + '&corpsecret=' + wework.secret[corp]);
-    if (result.errcode) {
+    if (result.data.errcode) {
       throw new HttpError({
         code: 403,
         msg: '获取企业微信 Token 失败',
-        data: result,
+        data: result.data,
       });
     }
-    redis.set('wework_access_token_' + corp, result.access_token, 'EX', parseInt(result.expires_in / 1.2));
-    return result.access_token;
+    redis.set('wework_access_token_' + corp, result.data.access_token, 'EX', parseInt(result.data.expires_in / 1.2));
+    return result.data.access_token;
+  }
+  async getUserID(code, corp) {
+    const accessToken = await this.getAccessToken(corp);
+    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + accessToken + '&code=' + code);
+    if (result.data.errcode) {
+      throw new HttpError({
+        code: 403,
+        msg: '获取企业微信 UserID 失败',
+        data: result.data,
+      });
+    }
+    return result.data.UserID;
+  }
+  async getUserInfo(userid, corp) {
+    const accessToken = await this.getAccessToken(corp);
+    const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=' + accessToken + '&userid=' + userid);
+    if (result.data.errcode) {
+      throw new HttpError({
+        code: 403,
+        msg: '获取企业微信 UserID 失败',
+        data: result.data,
+      });
+    }
+    return result.data;
   }
 }
 
