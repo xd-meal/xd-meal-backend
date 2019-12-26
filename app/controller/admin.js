@@ -12,6 +12,7 @@ const userImportRule = {
       department: 'string',
       corp: { type: 'string', required: false },
       email: 'string',
+      password: { type: 'string', required: false },
     },
   },
 };

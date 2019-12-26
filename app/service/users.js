@@ -1,12 +1,51 @@
 'use strict';
 const Service = require('egg').Service;
 const HttpError = require('../helper/error');
+const sha256 = require('crypto-js/sha256');
 
 const commonFilter = {
   __v: 0,
 };
 
+function randomString(length, chars) {
+  let result = '';
+  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+function pswEncode(str, pswSalt, confSalt = '') {
+  return sha256(str + pswSalt + confSalt);
+}
 class UsersService extends Service {
+  async login(setting) {
+    const { password, email } = setting;
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    // 先查 email
+    const user = await userModel.findOne({
+      email,
+    }, commonFilter);
+    if (!user) {
+      throw new HttpError({
+        code: 403,
+        msg: '用户名或密码错误',
+      });
+    }
+    const pswSalt = user.psw_salt;
+    const psw = user.password;
+    const encodePsw = pswEncode(password, pswSalt).toString();
+    if (psw === encodePsw) {
+      ctx.session.userId = user._id;
+      return {
+        code: 1,
+        msg: 'ok',
+      };
+    }
+    throw new HttpError({
+      code: 403,
+      msg: '用户名或密码错误',
+    });
+  }
+
   async checkLogin(params) {
     const ctx = this.ctx;
     let user = null;
@@ -92,19 +131,32 @@ class UsersService extends Service {
     const ctx = this.ctx;
     const userModel = ctx.model.User;
     const inserts = [];
+    const backRes = [];
     const session = await userModel.startSession();
-    let res;
     session.startTransaction();
     try {
       for (const user of users) {
+        if (user.password.length <= 6) {
+          user.password = '';
+        }
+        const psw = user.password ? user.password : randomString(16, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        const pswHash = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
         const queryExecution = {
           username: user.username,
           department: user.department,
           email: user.email,
+          password: pswEncode(psw, pswHash),
+          psw_salt: pswHash,
         };
+
+        backRes.push({
+          email: user.email,
+          password: psw,
+        });
+
         inserts.push(queryExecution);
       }
-      res = await userModel.insertMany(inserts, { session });
+      await userModel.insertMany(inserts, { session });
       await session.commitTransaction();
       session.endSession();
     } catch (e) {
@@ -120,7 +172,7 @@ class UsersService extends Service {
           throw e;
       }
     }
-    return res;
+    return backRes;
   }
 }
 
