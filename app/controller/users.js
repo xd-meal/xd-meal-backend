@@ -63,6 +63,7 @@ class UsersController extends Controller {
     const ctx = this.ctx;
     const userService = ctx.service.users;
     const weworkService = ctx.service.wework;
+    const config = ctx.app.config;
     let user = null;
     if (userService.isLoggedIn()) {
       throw new HttpError({
@@ -71,7 +72,7 @@ class UsersController extends Controller {
       });
     }
     const params = filterParams(ctx.request.body, weworkRule);
-    if (!this.config.wework || !this.config.wework.secret || !this.config.wework.secret[params.corp]) {
+    if (!config.wework || !config.wework.secret || !config.wework.secret[params.corp]) {
       throw new HttpError({
         code: 403,
         msg: '未配置企业微信或请求无效',

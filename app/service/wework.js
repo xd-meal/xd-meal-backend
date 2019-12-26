@@ -12,14 +12,15 @@ class WeWorkService extends Service {
     return token;
   }
   async fetchToken(corp) {
-    if (!this.config.wework || !this.config.wework.secret || !this.config.wework.secret[corp]) {
+    const config = this.ctx.app.config;
+    if (!config.wework || !config.wework.secret || !config.wework.secret[corp]) {
       throw new HttpError({
         code: 403,
         msg: '未配置企业微信或请求无效',
       });
     }
     const redis = this.ctx.app.redis;
-    const wework = this.config.wework;
+    const wework = config.wework;
     const result = await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=' + wework.corpID[corp] + '&corpsecret=' + wework.secret[corp]);
     if (result.data.errcode) {
       throw new HttpError({
