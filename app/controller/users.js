@@ -78,7 +78,7 @@ class UsersController extends Controller {
         msg: '未配置企业微信或请求无效',
       });
     }
-    const userid = weworkService.getUserID(params.code, params.corp);
+    const userid = await weworkService.getUserID(params.code, params.corp);
     user = await userService.weworkLogin(userid, params.corp);
     if (!user) {
       const weworkUserInfo = await weworkService.getUserInfo(userid, params.corp);
