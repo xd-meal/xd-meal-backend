@@ -60,14 +60,20 @@ class UsersService extends Service {
 
   async weworkCreate(userInfo, corp) {
     const ctx = this.ctx;
-    return await ctx.model.User.create({
+    const params = {
       username: userInfo.name,
       wework_userid: userInfo.userid,
       wechat_corpid: corp,
-      email: userInfo.email || null,
       role: 0,
-      department: userInfo.department[0] || null,
-    });
+      department: 1,
+    };
+    if (userInfo.department && userInfo.department.length) {
+      params.department = userInfo.department[0];
+    }
+    if (userInfo.email && userInfo.email.length) {
+      params.department = userInfo.email;
+    }
+    return await ctx.model.User.create(params);
   }
 
   /**
