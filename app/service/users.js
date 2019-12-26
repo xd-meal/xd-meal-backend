@@ -74,7 +74,7 @@ class UsersService extends Service {
    * @description 请注意此接口请求全表，请注意不要频繁调用，请让前端缓存数据
    * @return {Promise<User[]>} 用户列表
    */
-  async list() {
+  async findAllUsers() {
     const ctx = this.ctx;
     return await ctx.model.User.find({}, commonFilter).limit(2000);
   }
@@ -86,6 +86,41 @@ class UsersService extends Service {
     }, {
       fields: commonFilter,
     });
+  }
+
+  async importList(users) {
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    const inserts = [];
+    const session = await userModel.startSession();
+    let res;
+    session.startTransaction();
+    try {
+      for (const user of users) {
+        const queryExecution = {
+          username: user.username,
+          department: user.department,
+          email: user.email,
+        };
+        inserts.push(queryExecution);
+      }
+      res = await userModel.insertMany(inserts, { session });
+      await session.commitTransaction();
+      session.endSession();
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      switch (e.code) {
+        case 11000:
+          throw new HttpError({
+            code: 403,
+            msg: '存在重复email',
+          });
+        default:
+          throw e;
+      }
+    }
+    return res;
   }
 }
 
