@@ -60,7 +60,11 @@ module.exports = appInfo => {
   config.mongoose = {
     client: {
       url: 'mongodb://127.0.0.1/example',
-      options: {},
+      options: {
+        useCreateIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
     },
   };
   return {
