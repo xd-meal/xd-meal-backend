@@ -71,7 +71,7 @@ class UsersService extends Service {
       params.department = userInfo.department[0];
     }
     if (userInfo.email && userInfo.email.length) {
-      params.department = userInfo.email;
+      params.email = userInfo.email;
     }
     return await ctx.model.User.create(params);
   }
