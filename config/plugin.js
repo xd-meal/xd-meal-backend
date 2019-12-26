@@ -11,11 +11,7 @@ module.exports = {
     enable: true,
     package: 'egg-mongoose',
   },
-  // JSON web token
-  jwt: {
-    enable: true,
-    package: 'egg-jwt',
-  },
+  session: true,
   // 验证插件
   validate: {
     enable: true,

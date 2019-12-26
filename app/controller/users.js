@@ -5,11 +5,12 @@ const filterParams = require('../helper/filter');
 
 const createRule = {
   username: 'string',
-  password: 'string',
+  password: { type: 'string', required: false },
+  psw_salt: { type: 'string', required: false },
   email: { type: 'string', required: false },
   avatar: { type: 'string', required: false },
-  role: { type: 'enum', values: [ 0, 1, 2 ], required: false },
-  department: { type: 'string', required: false },
+  role: { type: 'enum', values: [ 0, 1, 2 ], required: true },
+  department: { type: 'string', required: true },
 };
 
 const editRule = {
@@ -26,71 +27,77 @@ const loginRule = {
   password: 'string',
 };
 
+const weworkRule = {
+  corp: 'string',
+  code: 'string',
+};
+
 class UsersController extends Controller {
   async login() {
     const ctx = this.ctx;
-    const app = ctx.app;
     const userService = ctx.service.users;
+    if (userService.isLoggedIn()) {
+      throw new HttpError({
+        code: 403,
+        msg: '已登录',
+      });
+    }
     const params = filterParams(ctx.request.body, createRule);
     ctx.validate(loginRule, params);
-    const user = await userService.checkLogin(params);
+    const user = await userService.passwordLogin(params);
     if (!user) {
       throw new HttpError({
         code: 403,
         msg: '用户名或密码无效',
       });
     }
-    const option = {
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2,
-    };
-    option.sub = user._id;
-    option.iss = 'xdmeal_normal';
-    const token = app.jwt.sign(option, app.config.jwt.secret);
-    this.ctx.body = { token };
+    ctx.session.user = user;
+    ctx.body = { code: 0, msg: '登录成功' };
   }
-  async index() {
+
+  async logout() {
     const ctx = this.ctx;
-    ctx.service.users.isAdmin();
-    ctx.body = await ctx.service.users.list();
-  }
-  //
-  async create() {
-    const ctx = this.ctx;
-    const userService = ctx.service.users;
-    await userService.isAdmin();
-    const params = filterParams(ctx.request.body, createRule);
-    ctx.validate(createRule, params);
-    ctx.body = await userService.create(params);
-  }
-  //
-  // async show(){
-  //
-  // }
-  //
-  async update() {
-    const ctx = this.ctx;
-    // const userService = ctx.service.users;
-    ctx.validate(editRule);
-    const params = filterParams(ctx.request.body, editRule);
-    const id = ctx.params.id;
-    if (!id) {
-      // || Object.keys(params).length === 0) {
+    if (ctx.session.user) {
+      ctx.session.user = undefined;
+      ctx.body = { code: 0, msg: '登出成功' };
+    } else {
       throw new HttpError({
-        code: 422,
-        msg: 'Unprocessable Entity',
+        code: 403,
+        msg: '尚未登录',
       });
     }
-    ctx.body = await ctx.service.users.update(params, id);
   }
-  //
-  // async update() {
-  //
-  // }
-  //
-  // async destroy() {
-  //
-  // }
+
+  async wework() {
+    const ctx = this.ctx;
+    const userService = ctx.service.users;
+    const weworkService = ctx.service.wework;
+    let user = null;
+    if (userService.isLoggedIn()) {
+      throw new HttpError({
+        code: 403,
+        msg: '已登录',
+      });
+    }
+    const params = filterParams(ctx.request.body, weworkRule);
+    if (!this.config.wework || !this.config.wework.secret || !this.config.wework.secret[params.corp]) {
+      throw new HttpError({
+        code: 403,
+        msg: '未配置企业微信或请求无效',
+      });
+    }
+    const userid = weworkService.getUserID(params.code, params.corp);
+    user = await userService.weworkLogin(userid, params.corp);
+    if (!user) {
+      const weworkUserInfo = await weworkService.getUserInfo(userid, params.corp);
+      user = await userService.weworkCreate(weworkUserInfo, params.corp);
+    }
+    ctx.session.user = user;
+    ctx.body = {
+      code: 200,
+      msg: '登录成功',
+    };
+  }
 }
 
 module.exports = UsersController;
