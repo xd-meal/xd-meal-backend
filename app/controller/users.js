@@ -71,6 +71,8 @@ class UsersController extends Controller {
   async wework() {
     const ctx = this.ctx;
     const userService = ctx.service.users;
+    const weworkService = ctx.service.wework;
+    let user = null;
     if (userService.isLoggedIn()) {
       throw new HttpError({
         code: 403,
@@ -78,31 +80,23 @@ class UsersController extends Controller {
       });
     }
     const params = filterParams(ctx.request.body, weworkRule);
-    if (!this.config.wework || !this.config.wework.accessToken || !this.config.wework.accessToken[params.corp]) {
+    if (!this.config.wework || !this.config.wework.secret || !this.config.wework.secret[params.corp]) {
       throw new HttpError({
         code: 403,
         msg: '未配置企业微信或请求无效',
       });
     }
-    const accessToken = this.config.wework.accessToken[params.corp];
-    const result = await ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=' + accessToken + '&code=' + params.code);
-    if (!result.data.errcode && result.data.UserId) {
-      const userid = result.data.UserId;
-      const user = await userService.weworkLogin(userid, params.corp);
-      if (!user) {
-        // Create user by wework
-      }
-      ctx.session.user = user;
-      ctx.body = {
-        code: 200,
-        msg: '登录成功',
-      };
-    } else if (!result.data.errcode && result.data.OpenId) {
-      ctx.body = { code: -1, msg: 'user not corp member' };
-    } else {
-      ctx.body = JSON.parse(result.data);
+    const userid = weworkService.getUserID(params.code, params.corp);
+    user = await userService.weworkLogin(userid, params.corp);
+    if (!user) {
+      const weworkUserInfo = await weworkService.getUserInfo(userid, params.corp);
+      user = await userService.weworkCreate(weworkUserInfo, params.corp);
     }
-
+    ctx.session.user = user;
+    ctx.body = {
+      code: 200,
+      msg: '登录成功',
+    };
   }
 }
 
