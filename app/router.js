@@ -6,20 +6,21 @@
 module.exports = app => {
   const { router, controller } = app;
   router.get('/', controller.home.index);
+  router.get('/api/v1', controller.home.index);
 
   // login
-  router.post('/api/user/login', controller.users.login);
-  router.get('/api/user/wework', controller.users.wework);
+  router.post('/api/v1/user/login', controller.users.login);
+  router.get('/api/v1/user/wework', controller.users.wework);
 
   // admin
-  router.post('/admin/user/list', controller.admin.userList);
-  router.get('/admin/dish/list', controller.admin.dishList);
-  router.post('/admin/dish', controller.admin.newDish);
-  router.get('/admin/dining/:startTime/:endTime', controller.admin.diningByTime);
-  router.post('/admin/dining', controller.admin.newDining);
-  router.put('/admin/dining/:id', controller.admin.updateDining);
-  router.delete('/admin/dining/:id', controller.admin.deleteDiningById);
-  router.get('/admin/users', controller.admin.users);
-  router.get('/admin/order/:startTime/:endTime', controller.admin.orderByUserIdAndTime);
-  router.put('/admin/dish/:id', controller.admin.updateDish);
+  router.post('/api/v1/admin/user/list', controller.admin.userList);
+  router.get('/api/v1/admin/dish/list', controller.admin.dishList);
+  router.post('/api/v1/admin/dish', controller.admin.newDish);
+  router.get('/api/v1/admin/dining/:startTime/:endTime', controller.admin.diningByTime);
+  router.post('/api/v1/admin/dining', controller.admin.newDining);
+  router.put('/api/v1/admin/dining/:id', controller.admin.updateDining);
+  router.delete('/api/v1/admin/dining/:id', controller.admin.deleteDiningById);
+  router.get('/api/v1/admin/users', controller.admin.users);
+  router.get('/api/v1/admin/order/:startTime/:endTime', controller.admin.orderByUserIdAndTime);
+  router.put('/api/v1/admin/dish/:id', controller.admin.updateDish);
 };
