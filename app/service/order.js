@@ -1,13 +1,16 @@
 'use strict';
 const Service = require('egg').Service;
-const HttpError = require('../helper/error');
+// const HttpError = require('../helper/error');
 
 class OrderService extends Service {
-  async findOrderByUserAndDiningID(userID, diningID) {
-    return await this.ctx.model.order.findOne({
+  async findOrderByUserAndDiningIDs(userID, diningIDs) {
+    return await this.ctx.model.order.find({
       uid: userID,
-      dining_id: diningID,
+      dining_id: { $in: diningIDs },
     });
+  }
+  async findByID(orderID) {
+    return await this.ctx.model.order.findByID(orderID);
   }
 }
 
