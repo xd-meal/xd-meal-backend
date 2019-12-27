@@ -61,7 +61,7 @@ class WeWorkService extends Service {
       this.logger.error('getUserInfo: Failed to get user info, userid: ' + userid + ' corp: ' + corp);
       throw new HttpError({
         code: 403,
-        msg: '获取企业微信 UserID 失败',
+        msg: '获取企业微信用户信息失败',
         data: result.data,
       });
     }
