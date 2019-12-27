@@ -26,6 +26,7 @@ class UsersService extends Service {
       email,
     }, commonFilter);
     if (!user) {
+      this.logger.info('passwordLogin: Could not find any user with email ' + email);
       throw new HttpError({
         code: 403,
         msg: '用户名或密码错误',
@@ -35,9 +36,20 @@ class UsersService extends Service {
     const psw = user.password;
     const encodePsw = pswEncode(password, pswSalt).toString();
     if (psw === encodePsw) {
-      ctx.session.userId = user._id;
+      this.logger.info('passwordLogin: User logged in. ' + {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      });
+      ctx.session.user = user;
       return user;
     }
+    this.logger.info('passwordLogin: Failed to login. ' + {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      attempt_pwd: password,
+    });
     throw new HttpError({
       code: 403,
       msg: '用户名或密码错误',
@@ -53,8 +65,15 @@ class UsersService extends Service {
         wechat_corpid: corp,
       });
     } catch (error) {
-      console.log(error);
+      this.logger.info(error);
     }
+    this.logger.info('weworkLogin: User logged in. ' + {
+      id: user._id,
+      username: user.username,
+      wechat_corpid: user.wechat_corpid,
+      wework_userid: user.wework_userid,
+    });
+    ctx.session.user = user;
     return user;
   }
 
@@ -147,6 +166,7 @@ class UsersService extends Service {
         });
       }
     }
+    this.logger.info('create: User created with info: ' + user);
     return await ctx.model.User.create({
       ...user,
     });
@@ -163,6 +183,7 @@ class UsersService extends Service {
 
   async update(params, id) {
     const ctx = this.ctx;
+    this.logger.info('update: User modified. ID: ' + id + ' \nParams: ' + params);
     return await ctx.model.User.findByIdAndUpdate(id, {
       ...params,
     }, {
@@ -177,6 +198,7 @@ class UsersService extends Service {
     const backRes = [];
     const session = await userModel.startSession();
     session.startTransaction();
+    this.logger.info('importList: Starting import transaction, list length ' + users.length);
     try {
       for (const user of users) {
         if (user.password.length <= 6) {
@@ -196,12 +218,17 @@ class UsersService extends Service {
           email: user.email,
           password: psw,
         });
-
+        this.logger.info('importList: Importing user with params: ' + {
+          username: user.username,
+          department: user.department,
+          email: user.email,
+        });
         inserts.push(queryExecution);
       }
       await userModel.insertMany(inserts, { session });
       await session.commitTransaction();
       session.endSession();
+      this.logger.info('importList: Transaction finished successfully.');
     } catch (e) {
       await session.abortTransaction();
       session.endSession();
