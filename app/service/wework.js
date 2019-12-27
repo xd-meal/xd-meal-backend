@@ -7,6 +7,7 @@ class WeWorkService extends Service {
     const redis = this.ctx.app.redis;
     let token = await redis.get('wework_access_token_' + corp);
     if (!token) {
+      this.logger.info('getAccessToken: Redis get failed, performing fetch from WeWork.');
       token = await this.fetchToken(corp);
     }
     return token;
@@ -14,6 +15,7 @@ class WeWorkService extends Service {
   async fetchToken(corp) {
     const config = this.ctx.app.config;
     if (!config.wework || !config.wework.secret || !config.wework.secret[corp]) {
+      this.logger.error('fetchToken: Invalid wework settings or param.\nIncoming corp: ' + corp + '\nCheck WeWork settings.');
       throw new HttpError({
         code: 403,
         msg: '未配置企业微信或请求无效',
@@ -25,6 +27,7 @@ class WeWorkService extends Service {
       dataType: 'json',
     });
     if (result.data.errcode) {
+      this.logger.error('fetchToken: Failed to get from WeWork remote, corp: ' + corp);
       throw new HttpError({
         code: 403,
         msg: '获取企业微信 Token 失败',
@@ -40,6 +43,7 @@ class WeWorkService extends Service {
       dataType: 'json',
     });
     if (result.data.errcode) {
+      this.logger.error('getUserID: Failed to get UserId, code: ' + code + ' corp: ' + corp);
       throw new HttpError({
         code: 403,
         msg: '获取企业微信 UserID 失败',
@@ -54,6 +58,7 @@ class WeWorkService extends Service {
       dataType: 'json',
     });
     if (result.data.errcode) {
+      this.logger.error('getUserInfo: Failed to get user info, userid: ' + userid + ' corp: ' + corp);
       throw new HttpError({
         code: 403,
         msg: '获取企业微信 UserID 失败',
