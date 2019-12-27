@@ -14,21 +14,21 @@ class DiningService extends Service {
       endTime,
     } = setting;
     const DiningModel = ctx.model.Dining;
-    const orderStartTimeAfterStartTime = {
-      order_start: {
+    const pickStartTimeAfterStartTime = {
+      pick_start: {
         $gt: startTime,
       },
     };
-    const orderEndTimeBeforeEndTime = {
-      order_end: {
+    const pickEndTimeBeforeEndTime = {
+      pick_end: {
         $lt: endTime,
       },
     };
     // 选取取餐时间开始大于选定时间头，而终止时间小于选定时间末尾
     return await DiningModel.find({
       $and: [
-        orderStartTimeAfterStartTime,
-        orderEndTimeBeforeEndTime,
+        pickStartTimeAfterStartTime,
+        pickEndTimeBeforeEndTime,
       ],
     });
   }

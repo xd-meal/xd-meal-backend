@@ -33,7 +33,7 @@ const addNewDiningRule = {
   order_end: 'number',
   pick_start: 'number',
   pick_end: 'number',
-  stat_type: { type: 'enum', values: [ 0, 1 ] },
+  stat_type: { type: 'enum', values: [ 0, 1 ], required: false },
   menu: {
     type: 'array',
     itemType: 'string',
@@ -77,7 +77,7 @@ class AdminController extends Controller {
     const ctx = this.ctx;
     const startTime = ctx.params.startTime;
     const endTime = ctx.params.endTime;
-    const diningService = ctx.service.dish;
+    const diningService = ctx.service.dining;
     // TODO: 时间校验
     ctx.body = await diningService.findDiningByTime({
       startTime,
