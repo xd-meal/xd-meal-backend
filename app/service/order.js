@@ -1,14 +1,16 @@
 'use strict';
 const Service = require('egg').Service;
-const HttpError = require('../helper/error');
-
-const commonFilter = {
-  __v: 0,
-};
+// const HttpError = require('../helper/error');
 
 class OrderService extends Service {
-  async findOrderByUserIdAndTimeRule() {
-
+  async findOrderByUserAndDiningIDs(userID, diningIDs) {
+    return await this.ctx.model.order.find({
+      uid: userID,
+      dining_id: { $in: diningIDs },
+    });
+  }
+  async findByID(orderID) {
+    return await this.ctx.model.order.findByID(orderID);
   }
 }
 

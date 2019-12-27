@@ -1,6 +1,6 @@
 'use strict';
 const Service = require('egg').Service;
-const HttpError = require('../helper/error');
+// const HttpError = require('../helper/error');
 
 const commonFilter = {
   __v: 0,
@@ -31,6 +31,11 @@ class DishService extends Service {
       desc: dish.desc,
       supplier: dish.supplier,
     }, { new: true });
+  }
+
+  async getDish(id) {
+    const dishModel = this.ctx.model.Dish;
+    return dishModel.findById(id);
   }
 }
 
