@@ -104,7 +104,14 @@ class DiningService extends Service {
     return await DiningModel.findByIdAndDelete(id);
   }
 
-
+  async getAllPickableDinings() {
+    const ctx = this.ctx;
+    const DiningModel = ctx.model.Dining;
+    return await DiningModel.find({
+      pick_start: { $lt: Date.now() },
+      pick_end: { $gt: Date.now() },
+    });
+  }
 }
 
 module.exports = DiningService;
