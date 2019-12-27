@@ -62,6 +62,9 @@ module.exports = appInfo => {
       },
     },
   };
+  config.logger = {
+    outputJSON: true,
+  };
   return {
     ...config,
     ...userConfig,
