@@ -65,6 +65,9 @@ module.exports = appInfo => {
   config.logger = {
     outputJSON: true,
   };
+  config.session = {
+    key: 'XD-MEAL-SESSION',
+  };
   return {
     ...config,
     ...userConfig,

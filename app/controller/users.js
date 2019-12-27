@@ -50,6 +50,9 @@ class UsersController extends Controller {
     const ctx = this.ctx;
     if (ctx.session.user) {
       ctx.session.user = undefined;
+      ctx.cookies.set('XD-MEAL-SESSION', 0, {
+        expires: 'Thu, 01 Jan 1970 00:00:00 UTC',
+      });
       ctx.body = { code: 0, msg: '登出成功' };
     } else {
       throw new HttpError({
