@@ -2,13 +2,12 @@
 const Service = require('egg').Service;
 const HttpError = require('../helper/error');
 
-const commonFilter = {
-  __v: 0,
-};
-
 class OrderService extends Service {
-  async findOrderByUserIdAndTimeRule() {
-
+  async findOrderByUserAndDiningID(userID, diningID) {
+    return await this.ctx.model.order.findOne({
+      uid: userID,
+      dining_id: diningID,
+    });
   }
 }
 
