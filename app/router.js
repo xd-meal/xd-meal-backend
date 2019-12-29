@@ -6,6 +6,8 @@
 module.exports = app => {
   const { router, controller } = app;
   const isAdmin = app.middleware.isAdmin;
+  const isLoggedin = app.middleware.isLoggedin;
+
   router.get('/', controller.home.index);
   router.get('/api/v1', controller.home.index);
 
@@ -14,16 +16,16 @@ module.exports = app => {
   router.get('/api/v1/user/wework', controller.users.wework);
 
   // logout
-  router.get('/api/v1/user/logout', controller.users.logout);
+  router.get('/api/v1/user/logout', isLoggedin, controller.users.logout);
 
   // my dish
-  router.get('/api/v1/myDish', controller.dish.pickingMyDish);
+  router.get('/api/v1/myDish', isLoggedin, controller.dish.pickingMyDish);
 
   // get all orderable dining
   // router.get('api/v1/dining/list');
 
   // admin
-  router.post('/api/v1/admin/user/list', controller.admin.userList);
+  router.post('/api/v1/admin/user/list', isAdmin, controller.admin.userList);
   router.get('/api/v1/admin/dish/list', isAdmin, controller.admin.dishList);
   router.post('/api/v1/admin/dish', isAdmin, controller.admin.newDish);
   router.get('/api/v1/admin/dining/:startTime/:endTime', isAdmin, controller.admin.diningByTime);

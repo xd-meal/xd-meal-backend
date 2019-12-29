@@ -48,18 +48,11 @@ class UsersController extends Controller {
 
   async logout() {
     const ctx = this.ctx;
-    if (ctx.session.user) {
-      ctx.session.user = undefined;
-      ctx.cookies.set('XD-MEAL-SESSION', 0, {
-        expires: 'Thu, 01 Jan 1970 00:00:00 UTC',
-      });
-      ctx.body = { code: 0, msg: '登出成功' };
-    } else {
-      throw new HttpError({
-        code: 403,
-        msg: '尚未登录',
-      });
-    }
+    ctx.session.user = undefined;
+    ctx.cookies.set('XD-MEAL-SESSION', 0, {
+      expires: 'Thu, 01 Jan 1970 00:00:00 UTC',
+    });
+    ctx.body = { code: 0, msg: '登出成功' };
   }
 
   async wework() {
