@@ -178,7 +178,11 @@ class UsersService extends Service {
    */
   async findAllUsers() {
     const ctx = this.ctx;
-    return await ctx.model.User.find({}, commonFilter).limit(2000);
+    return await ctx.model.User.find({}, {
+      ...commonFilter,
+      password: 0,
+      psw_salt: 0,
+    }).limit(2000);
   }
 
   async update(params, id) {
