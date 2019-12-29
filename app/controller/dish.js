@@ -6,16 +6,9 @@ const HttpError = require('../helper/error');
 class DishController extends Controller {
   async pickingMyDish() {
     const ctx = this.ctx;
-    const userService = ctx.service.users;
     const diningService = ctx.service.dining;
     const orderService = ctx.service.order;
     const tokenService = ctx.service.orderToken;
-    if (!userService.isLoggedIn()) {
-      throw new HttpError({
-        code: 403,
-        msg: '尚未登录',
-      });
-    }
     const pickableDinings = await diningService.getAllPickableDinings();
     const pickableIDs = [];
     pickableDinings.forEach(element => {
