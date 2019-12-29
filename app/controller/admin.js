@@ -108,8 +108,10 @@ class AdminController extends Controller {
   async deleteDiningById() {
     const ctx = this.ctx;
     const diningService = ctx.service.dining;
+    const orderService = ctx.service.order;
     const id = ctx.params.id;
     await diningService.deleteDiningById(id);
+    await orderService.deleteAllOrdersByDining(id);
     ctx.body = {
       id,
     };

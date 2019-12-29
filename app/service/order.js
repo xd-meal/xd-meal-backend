@@ -12,6 +12,11 @@ class OrderService extends Service {
   async findByID(orderID) {
     return await this.ctx.model.order.findByID(orderID);
   }
+  async deleteAllOrdersByDining(diningID) {
+    await this.ctx.model.order.deleteMany({
+      dining_id: diningID,
+    });
+  }
 }
 
 module.exports = OrderService;
