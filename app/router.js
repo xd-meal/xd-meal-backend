@@ -18,11 +18,12 @@ module.exports = app => {
   // logout
   router.get('/api/v1/user/logout', isLoggedin, controller.users.logout);
 
-  // my dish
+  // my
   router.get('/api/v1/myDish', isLoggedin, controller.dish.pickingMyDish);
+  router.get('/api/v1/orders', isLoggedin, controller.dining.getAllUnpickedOrdered);
 
-  // get all orderable dining
-  // router.get('api/v1/dining/list');
+  // dining
+  router.get('api/v1/dining/list', isLoggedin, controller.dining.getAllOrderable);
 
   // admin
   router.post('/api/v1/admin/user/list', isAdmin, controller.admin.userList);

@@ -104,12 +104,32 @@ class DiningService extends Service {
     return await DiningModel.findByIdAndDelete(id);
   }
 
+  async getAllOrderable() {
+    const ctx = this.ctx;
+    const DiningModel = ctx.model.Dining;
+    return await DiningModel.find({
+      $and: [
+        {
+          order_start: { $lt: Date.now() },
+          order_end: { $gt: Date.now() },
+        },
+        { stat_type: 1 },
+      ],
+    });
+  }
+
   async getAllPickableDinings() {
     const ctx = this.ctx;
     const DiningModel = ctx.model.Dining;
     return await DiningModel.find({
       pick_start: { $lt: Date.now() },
       pick_end: { $gt: Date.now() },
+    });
+  }
+
+  async getDinings(diningIDs) {
+    return await this.ctx.model.dining.find({
+      _id: { $in: diningIDs },
     });
   }
 }

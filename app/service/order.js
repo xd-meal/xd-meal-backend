@@ -13,8 +13,16 @@ class OrderService extends Service {
     return await this.ctx.model.order.findByID(orderID);
   }
   async deleteAllOrdersByDining(diningID) {
-    await this.ctx.model.order.deleteMany({
+    return await this.ctx.model.order.deleteMany({
       dining_id: diningID,
+    });
+  }
+  async getAllUnpickedOrdered(userID) {
+    return await this.ctx.model.order.find({
+      $and: [
+        { uid: userID },
+        { picked: false },
+      ],
     });
   }
 }
