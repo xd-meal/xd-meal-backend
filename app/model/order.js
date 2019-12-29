@@ -12,6 +12,9 @@ module.exports = app => {
     menu_id: {
       type: Schema.Types.ObjectId,
     },
+    picked: {
+      type: Boolean,
+    },
     createTime: {
       type: Date,
       default: Date.now,
