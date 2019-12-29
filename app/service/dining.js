@@ -128,7 +128,7 @@ class DiningService extends Service {
   }
 
   async getDinings(diningIDs) {
-    return await this.ctx.model.dining.find({
+    return await this.ctx.model.Dining.find({
       _id: { $in: diningIDs },
     });
   }

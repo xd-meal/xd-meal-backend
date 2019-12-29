@@ -10,7 +10,7 @@ class DiningController extends Controller {
       return acc;
     }, []);
     const ordered = await this.ctx.service.order.findOrderByUserAndDiningIDs(this.ctx.session.user._id, orderableIds);
-    return {
+    this.ctx.body = {
       dinings: orderable,
       orders: ordered,
     };
@@ -21,7 +21,7 @@ class DiningController extends Controller {
       acc.push(cur.dining_id);
       return acc;
     }, []));
-    return {
+    this.ctx.body = {
       ordered,
       dinings,
     };

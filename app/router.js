@@ -23,7 +23,7 @@ module.exports = app => {
   router.get('/api/v1/orders', isLoggedin, controller.dining.getAllUnpickedOrdered);
 
   // dining
-  router.get('api/v1/dining/list', isLoggedin, controller.dining.getAllOrderable);
+  router.get('/api/v1/dining/list', isLoggedin, controller.dining.getAllOrderable);
 
   // admin
   router.post('/api/v1/admin/user/list', isAdmin, controller.admin.userList);
