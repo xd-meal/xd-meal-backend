@@ -25,7 +25,7 @@ class DiningService extends Service {
       },
     };
     // 选取取餐时间开始大于选定时间头，而终止时间小于选定时间末尾
-    return await DiningModel.find({
+    return DiningModel.find({
       $and: [
         pickStartTimeAfterStartTime,
         pickEndTimeBeforeEndTime,
@@ -51,6 +51,7 @@ class DiningService extends Service {
       });
     }
     return await DiningModel.create({
+      title: ding.title,
       order_start: ding.order_start,
       order_end: ding.order_end,
       pick_start: ding.pick_start,
@@ -101,13 +102,13 @@ class DiningService extends Service {
   async deleteDiningById(id) {
     const ctx = this.ctx;
     const DiningModel = ctx.model.Dining;
-    return await DiningModel.findByIdAndDelete(id);
+    return DiningModel.findByIdAndDelete(id);
   }
 
   async getAllOrderable() {
     const ctx = this.ctx;
     const DiningModel = ctx.model.Dining;
-    return await DiningModel.find({
+    return DiningModel.find({
       $and: [
         {
           order_start: { $lt: Date.now() },

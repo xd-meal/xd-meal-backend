@@ -28,10 +28,8 @@ class UsersController extends Controller {
     const ctx = this.ctx;
     const userService = ctx.service.users;
     if (userService.isLoggedIn()) {
-      throw new HttpError({
-        code: 403,
-        msg: '已登录',
-      });
+      ctx.body = { code: 0, msg: '登录成功' };
+      return;
     }
     const params = filterParams(ctx.request.body, createRule);
     ctx.validate(loginRule, params);
