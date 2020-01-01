@@ -1,6 +1,7 @@
 'use strict';
 
 const Controller = require('egg').Controller;
+const HttpError = require('../helper/error');
 
 class DiningController extends Controller {
   async getAllOrderable() {
@@ -25,6 +26,31 @@ class DiningController extends Controller {
       ordered,
       dinings,
     };
+  }
+  async performOrder() {
+    const ctx = this.ctx;
+    const orders = ctx.request.body;
+    const dinings = await ctx.service.dining.getOrderableDinings(orders.reduce((acc, cur) => {
+      acc.push(cur.diningId);
+      return acc;
+    }, []));
+    orders.forEach(order => {
+      const _index = dinings.findIndex(dining => {
+        return dining._id === order.dining_id;
+      });
+      this.logger.info('performOrder: request includes invalid dinings. Orders: ' + orders + '\nDinings: ' + dinings + '\nCurrent items: ' + order);
+      if (_index < 0) {
+        throw new HttpError({
+          code: 403,
+          msg: '点餐内容包含无效餐次',
+        });
+      }
+    });
+    ctx.service.order.deleteOrdersByUserAndDinigns(ctx.session.user._id, dinings.reduce((acc, cur) => {
+      acc.push(cur._id);
+      return acc;
+    }, []));
+    ctx.service.order.batchOrder(ctx.session.user._id, orders);
   }
 }
 module.exports = DiningController;
