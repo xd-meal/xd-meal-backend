@@ -78,7 +78,7 @@ module.exports = appInfo => {
     ...config,
     ...userConfig,
     notfound: {
-      pageUrl: '/public/404.html',
+      pageUrl: '/404',
     },
     onerror: {
       accepts() {
