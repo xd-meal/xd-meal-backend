@@ -36,9 +36,11 @@ class DiningController extends Controller {
     }, []));
     orders.forEach(order => {
       const _index = dinings.findIndex(dining => {
-        return dining._id === order.dining_id;
+        return (dining._id).toString() === (order.diningId).toString();
       });
-      this.logger.info('performOrder: request includes invalid dinings. Orders: ' + orders + '\nDinings: ' + dinings + '\nCurrent items: ' + order);
+      this.logger.info('performOrder: request includes invalid dinings.' +
+        ' Orders: ' + JSON.stringify(orders) + '\nDinings: ' + JSON.stringify(dinings) + '\nCurrent' +
+        ' items: ' + JSON.stringify(order));
       if (_index < 0) {
         throw new HttpError({
           code: 403,
@@ -51,6 +53,9 @@ class DiningController extends Controller {
       return acc;
     }, []));
     ctx.service.order.batchOrder(ctx.session.user._id, orders);
+    ctx.body = {
+      code: 0,
+    };
   }
 }
 module.exports = DiningController;

@@ -129,7 +129,7 @@ class DiningService extends Service {
   }
 
   async getOrderableDinings(diningIDs) {
-    return await this.ctx.model.Dining.find({
+    return this.ctx.model.Dining.find({
       $and: [
         {
           order_start: { $lt: Date.now() },
