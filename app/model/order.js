@@ -26,5 +26,6 @@ module.exports = app => {
   }, {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' },
   });
+  OrderSchema.index({ uid: 1, dining_id: 1 }, { unique: true });
   return mongoose.model('Order', OrderSchema, 'order');
 };

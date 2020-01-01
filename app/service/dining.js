@@ -127,10 +127,20 @@ class DiningService extends Service {
     });
   }
 
-  async getDinings(diningIDs) {
+  async getOrderableDinings(diningIDs) {
     return await this.ctx.model.Dining.find({
-      _id: { $in: diningIDs },
+      $and: [
+        {
+          order_start: { $lt: Date.now() },
+          order_end: { $gt: Date.now() },
+        },
+        { _id: { $in: diningIDs } },
+      ],
     });
+  }
+
+  async getDiningByID(diningID) {
+    return await this.ctx.model.Dining.findById(diningID);
   }
 }
 
