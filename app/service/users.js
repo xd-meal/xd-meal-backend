@@ -205,7 +205,7 @@ class UsersService extends Service {
     this.logger.info('importList: Starting import transaction, list length ' + users.length);
     try {
       for (const user of users) {
-        if (user.password.length <= 6) {
+        if (!user.password || user.password.length <= 6) {
           user.password = '';
         }
         const psw = user.password ? user.password : randomString(16, chrList);
