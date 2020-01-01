@@ -4,7 +4,7 @@ const md5 = require('crypto-js/md5');
 class OrderTokenService extends Service {
   async generate(userId, diningId, orderId = null) {
     if (this.app.redis) {
-      const token = md5(userId + diningId + Date.now());
+      const token = md5(userId + diningId + Date.now()).toString();
       await this.app.redis.set('ORDER_' + token, JSON.stringify({
         userId,
         diningId,

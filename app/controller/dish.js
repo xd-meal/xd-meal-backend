@@ -18,7 +18,7 @@ class DishController extends Controller {
       }
       return acc;
     }, []);
-    const myDish = await orderService.findOrderByUserAndDiningIDs(ctx.session.user._id, pickableIDs);
+    const myDish = await orderService.findPickableOrderByUserAndDiningIDs(ctx.session.user._id, pickableIDs);
     if (!myDish.length && !nonOrders.length) {
       throw new HttpError({
         code: 404,
@@ -27,9 +27,9 @@ class DishController extends Controller {
     } else if (myDish.length) {
       const currentOrder = myDish[0];
       const currentDining = pickableDinings.find(el => {
-        return el._id === currentOrder.dining_id;
+        return el._id.toString() === currentOrder.dining_id.toString();
       });
-      const token = tokenService.generate(ctx.session.user._id, currentDining._id, currentOrder._id);
+      const token = await tokenService.generate(ctx.session.user._id, currentDining._id, currentOrder._id);
       ctx.body = {
         token,
         dining: currentDining,
@@ -37,7 +37,7 @@ class DishController extends Controller {
       };
     } else if (nonOrders.length) {
       const currentDining = nonOrders[0];
-      const token = tokenService.generate(ctx.session.user._id, currentDining._id);
+      const token = await tokenService.generate(ctx.session.user._id, currentDining._id);
       ctx.body = {
         token,
         dining: currentDining,
