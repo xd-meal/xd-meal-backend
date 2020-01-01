@@ -68,7 +68,7 @@ class UsersService extends Service {
       this.logger.info(error);
     }
     if (!user) {
-      const weworkUserInfo = await this.getUserInfo(userid, corp);
+      const weworkUserInfo = await ctx.service.wework.getUserInfo(userid, corp);
       user = await this.weworkCreate(weworkUserInfo, corp);
     }
     this.logger.info('weworkLogin: User logged in. ' + {
@@ -89,6 +89,7 @@ class UsersService extends Service {
       wechat_corpid: corp,
       role: 0,
       department: 1,
+      avatar: userInfo.avatar,
     };
     if (userInfo.department && userInfo.department.length) {
       params.department = userInfo.department[0];
