@@ -10,26 +10,38 @@ class DishController extends Controller {
     const orderService = ctx.service.order;
     const tokenService = ctx.service.orderToken;
     const pickableDinings = await diningService.getAllPickableDinings();
-    const pickableIDs = [];
-    pickableDinings.forEach(element => {
-      pickableIDs.push(element._id);
-    });
+    const nonOrders = [];
+    const pickableIDs = pickableDinings.reduce((acc, cur) => {
+      acc.push(cur._id);
+      if (cur.stat_type === 0) {
+        nonOrders.push(cur);
+      }
+      return acc;
+    }, []);
     const myDish = await orderService.findOrderByUserAndDiningIDs(ctx.session.user._id, pickableIDs);
-    if (!myDish.length) {
-      ctx.body = {
+    if (!myDish.length && !nonOrders.length) {
+      throw new HttpError({
         code: 404,
         msg: '目前没有可取餐次',
-      };
-    } else {
+      });
+    } else if (myDish.length) {
       const currentOrder = myDish[0];
       const currentDining = pickableDinings.find(el => {
         return el._id === currentOrder.dining_id;
       });
-      const token = tokenService.generate(currentOrder._id);
+      const token = tokenService.generate(ctx.session.user._id, currentDining._id, currentOrder._id);
       ctx.body = {
         token,
         dining: currentDining,
         order: currentOrder,
+      };
+    } else if (nonOrders.length) {
+      const currentDining = nonOrders[0];
+      const token = tokenService.generate(ctx.session.user._id, currentDining._id);
+      ctx.body = {
+        token,
+        dining: currentDining,
+        order: {},
       };
     }
   }
