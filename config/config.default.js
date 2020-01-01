@@ -68,6 +68,9 @@ module.exports = appInfo => {
   config.session = {
     key: 'XD-MEAL-SESSION',
   };
+  config.pos = {
+    keys: [],
+  };
   return {
     ...config,
     ...userConfig,

@@ -7,6 +7,7 @@ module.exports = app => {
   const { router, controller } = app;
   const isAdmin = app.middleware.isAdmin;
   const isLoggedin = app.middleware.isLoggedin;
+  const isAuthedPos = app.middleware.isAuthedPos;
 
   router.get('/', controller.home.index);
   router.get('/api/v1', controller.home.index);
@@ -24,6 +25,10 @@ module.exports = app => {
 
   // dining
   router.get('/api/v1/dining/list', isLoggedin, controller.dining.getAllOrderable);
+  router.post('/api/v1/order', isLoggedin, controller.dining.performOrder);
+
+  // pos machine endpoints
+  router.get('/api/v1/token/:token', isAuthedPos, controller.pos.performPick);
 
   // admin
   router.post('/api/v1/admin/user/list', isAdmin, controller.admin.userList);
