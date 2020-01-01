@@ -42,7 +42,6 @@ class UsersController extends Controller {
         msg: '用户名或密码无效',
       });
     }
-    ctx.session.user = user;
     ctx.body = { code: 0, msg: '登录成功' };
   }
 
