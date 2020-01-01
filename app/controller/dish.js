@@ -31,17 +31,25 @@ class DishController extends Controller {
       });
       const token = await tokenService.generate(ctx.session.user._id, currentDining._id, currentOrder._id);
       ctx.body = {
-        token,
-        dining: currentDining,
-        order: currentOrder,
+        code: 200,
+        msg: '已准备取餐',
+        data: {
+          token,
+          dining: currentDining,
+          order: currentOrder,
+        },
       };
     } else if (nonOrders.length) {
       const currentDining = nonOrders[0];
       const token = await tokenService.generate(ctx.session.user._id, currentDining._id);
       ctx.body = {
-        token,
-        dining: currentDining,
-        order: {},
+        code: 200,
+        msg: '已准备取餐',
+        data: {
+          token,
+          dining: currentDining,
+          order: {},
+        },
       };
     }
   }
