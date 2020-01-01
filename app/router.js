@@ -9,9 +9,6 @@ module.exports = app => {
   const isLoggedin = app.middleware.isLoggedin;
   const isAuthedPos = app.middleware.isAuthedPos;
 
-  router.get('/', controller.home.index);
-  router.get('/api/v1', controller.home.index);
-
   // login
   router.post('/api/v1/user/login', controller.users.login);
   router.get('/api/v1/user/wework', controller.users.wework);
