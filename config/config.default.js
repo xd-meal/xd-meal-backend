@@ -67,6 +67,8 @@ module.exports = appInfo => {
   };
   config.session = {
     key: 'XD-MEAL-SESSION',
+    // XXX: 不确定是否有安全问题，前端需要获取以判断登陆情况
+    httpOnly: false,
   };
   config.pos = {
     keys: [],
