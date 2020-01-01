@@ -69,6 +69,7 @@ module.exports = appInfo => {
     key: 'XD-MEAL-SESSION',
     // XXX: 不确定是否有安全问题，前端需要获取以判断登陆情况
     httpOnly: false,
+    renew: true,
   };
   config.pos = {
     keys: [],
@@ -76,8 +77,8 @@ module.exports = appInfo => {
   return {
     ...config,
     ...userConfig,
-    session: {
-      renew: true,
+    notfound: {
+      pageUrl: '/public/404.html',
     },
     onerror: {
       accepts() {
