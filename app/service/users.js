@@ -67,6 +67,10 @@ class UsersService extends Service {
     } catch (error) {
       this.logger.info(error);
     }
+    if (!user) {
+      const weworkUserInfo = await this.getUserInfo(userid, corp);
+      user = await this.weworkCreate(weworkUserInfo, corp);
+    }
     this.logger.info('weworkLogin: User logged in. ' + {
       id: user._id,
       username: user.username,

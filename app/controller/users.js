@@ -73,11 +73,6 @@ class UsersController extends Controller {
     }
     const userid = await weworkService.getUserID(params.code, params.corp);
     user = await userService.weworkLogin(userid, params.corp);
-    if (!user) {
-      const weworkUserInfo = await weworkService.getUserInfo(userid, params.corp);
-      user = await userService.weworkCreate(weworkUserInfo, params.corp);
-    }
-    ctx.session.user = user;
     ctx.body = {
       code: 200,
       msg: '登录成功',
