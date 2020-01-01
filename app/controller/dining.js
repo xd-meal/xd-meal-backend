@@ -29,7 +29,7 @@ class DiningController extends Controller {
   }
   async performOrder() {
     const ctx = this.ctx;
-    const orders = ctx.request.body.dishIds;
+    const orders = ctx.request.body;
     const dinings = await ctx.service.dining.getOrderableDinings(orders.reduce((acc, cur) => {
       acc.push(cur.diningId);
       return acc;
