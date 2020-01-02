@@ -9,8 +9,15 @@ class OrderService extends Service {
       dining_id: { $in: diningIDs },
     });
   }
+  async findPickableOrderByUserAndDiningIDs(userID, diningIDs) {
+    return await this.ctx.model.Order.find({
+      uid: userID,
+      dining_id: { $in: diningIDs },
+      picked: false,
+    });
+  }
   async findByID(orderID) {
-    return await this.ctx.model.Order.findByID(orderID);
+    return await this.ctx.model.Order.findOne({ _id: orderID });
   }
   async deleteAllOrdersByDining(diningID) {
     return await this.ctx.model.Order.deleteMany({

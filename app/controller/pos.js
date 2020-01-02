@@ -7,7 +7,7 @@ class PosController extends Controller {
   async performPick() {
     const ctx = this.ctx;
     const order = await ctx.service.orderToken.get(ctx.params.token);
-    if (!(order.userId && order.diningId)) {
+    if (!(order && order.userId && order.diningId)) {
       throw new HttpError({
         code: 403,
         msg: 'Token 无效',
