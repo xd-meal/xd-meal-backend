@@ -19,6 +19,11 @@ module.exports = app => {
   // logout
   router.get('/api/v1/user/logout', isLoggedin, controller.users.logout);
 
+  // user
+  router.get('/api/v1/user/profile', isLoggedin, controller.users.userProfile);
+  router.put('/api/v1/user/config', isLoggedin, controller.users.userUpdateConfig);
+  router.put('/api/v1/user/reset_pwd', isLoggedin, controller.users.resetPsw);
+
   // my
   router.get('/api/v1/myDish', isLoggedin, controller.dish.pickingMyDish);
   router.get('/api/v1/orders', isLoggedin, controller.dining.getAllUnpickedOrdered);

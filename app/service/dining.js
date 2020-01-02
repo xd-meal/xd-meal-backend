@@ -44,6 +44,7 @@ class DiningService extends Service {
       $or: findList,
     }, commonFilter);
     if (res.length !== findList.length) {
+      this.logger.info('error menu id, findList:', ding.menu, 'resultList:', res.map(_ => _._id));
       throw new HttpError({
         code: 403,
         msg: '存在错误的 menu id',

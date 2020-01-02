@@ -13,10 +13,39 @@ function randomString(length, chars) {
   for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 }
+
 function pswEncode(str, pswSalt, confSalt = '') {
   return sha256(str + pswSalt + confSalt);
 }
+
 class UsersService extends Service {
+  async validatePsw(password, user) {
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    let u;
+    if (user.email) {
+      u = await userModel.findOne({
+        email: user.email,
+      }, commonFilter);
+    }
+    if (user._id) {
+      u = await userModel.findById(user._id, commonFilter);
+    }
+    if (!u) {
+      // 登陆的用户根本不存在
+      this.logger.info('unknow user:' + JSON.stringify(u));
+      return false;
+    }
+    const pswSalt = u.psw_salt;
+    const psw = u.password;
+    const encodePsw = pswEncode(password, pswSalt).toString();
+    this.logger.info('success check user:' + JSON.stringify({
+      email: u.email,
+      id: u._id,
+    }));
+    return psw === encodePsw;
+  }
+
   async passwordLogin(setting) {
     const { password, email } = setting;
     const ctx = this.ctx;
@@ -26,7 +55,7 @@ class UsersService extends Service {
       email,
     }, commonFilter);
     if (!user) {
-      this.logger.info('passwordLogin: Could not find any user with email ' + email);
+      this.logger.info('passwordLogin: Could not find any user with email ', email);
       throw new HttpError({
         code: 403,
         msg: '用户名或密码错误',
@@ -36,7 +65,7 @@ class UsersService extends Service {
     const psw = user.password;
     const encodePsw = pswEncode(password, pswSalt).toString();
     if (psw === encodePsw) {
-      this.logger.info('passwordLogin: User logged in. ' + {
+      this.logger.info('passwordLogin: User logged in. ', {
         id: user._id,
         username: user.username,
         email: user.email,
@@ -44,7 +73,7 @@ class UsersService extends Service {
       ctx.session.user = user;
       return user;
     }
-    this.logger.info('passwordLogin: Failed to login. ' + {
+    this.logger.info('passwordLogin: Failed to login. ', {
       id: user._id,
       username: user.username,
       email: user.email,
@@ -55,6 +84,25 @@ class UsersService extends Service {
       msg: '用户名或密码错误',
     });
   }
+  async loginOut() {
+    const ctx = this.ctx;
+    ctx.session.user = undefined;
+    ctx.cookies.set('XD-MEAL-SESSION', 0, {
+      expires: 'Thu, 01 Jan 1970 00:00:00 UTC',
+    });
+  }
+
+  getCurrentUserId() {
+    const ctx = this.ctx;
+    if (!ctx.session.user || !ctx.session.user._id) {
+      throw new HttpError({
+        code: 403,
+        msg: '尚未登陆',
+      });
+    }
+    return ctx.session.user._id;
+  }
+
 
   async weworkLogin(userid, corp) {
     const ctx = this.ctx;
@@ -172,13 +220,25 @@ class UsersService extends Service {
     });
   }
 
+  async updatePsw(userId, password) {
+    const ctx = this.ctx;
+    const pswHash = randomString(32, chrList);
+    const encodePsw = pswEncode(password, pswHash).toString();
+    // TODO: 失败情况
+    await ctx.model.User.findByIdAndUpdate(userId, {
+      password: encodePsw,
+      psw_salt: pswHash,
+    });
+    this.loginOut();
+  }
+
   /**
    * @description 请注意此接口请求全表，请注意不要频繁调用，请让前端缓存数据
    * @return {Promise<User[]>} 用户列表
    */
   async findAllUsers() {
     const ctx = this.ctx;
-    return await ctx.model.User.find({}, {
+    return ctx.model.User.find({}, {
       ...commonFilter,
       password: 0,
       psw_salt: 0,
@@ -187,14 +247,40 @@ class UsersService extends Service {
 
   async update(params, id) {
     const ctx = this.ctx;
-    this.logger.info('update: User modified. ID: ' + id + ' \nParams: ' + params);
-    return await ctx.model.User.findByIdAndUpdate(id, {
+    this.logger.info('update: User modified. ID: ', id, ' \nParams: ', params);
+    return ctx.model.User.findByIdAndUpdate(id, {
       ...params,
     }, {
       fields: commonFilter,
     });
   }
 
+  async updateUserConfig(config) {
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    const userId = (ctx.session.user && ctx.session.user._id).toString();
+    if (this.userId !== '') {
+      const res = userModel.findOneAndUpdate(userId, {
+        config,
+      });
+      if (res) {
+        return res;
+      }
+    }
+    throw new HttpError({
+      code: 403,
+      msg: '尚未登陆',
+    });
+  }
+  async getUserProfile(userId) {
+    const ctx = this.ctx;
+    const userModel = ctx.model.User;
+    return userModel.findById(userId).select({
+      avatar: 1,
+      username: 1,
+      config: 1,
+    });
+  }
   async importList(users) {
     const ctx = this.ctx;
     const userModel = ctx.model.User;
@@ -202,7 +288,7 @@ class UsersService extends Service {
     const backRes = [];
     const session = await userModel.startSession();
     session.startTransaction();
-    this.logger.info('importList: Starting import transaction, list length ' + users.length);
+    this.logger.info('importList: Starting import transaction, list length ', users.length);
     try {
       for (const user of users) {
         if (!user.password || user.password.length <= 6) {
@@ -222,7 +308,7 @@ class UsersService extends Service {
           email: user.email,
           password: psw,
         });
-        this.logger.info('importList: Importing user with params: ' + {
+        this.logger.info('importList: Importing user with params: ', {
           username: user.username,
           department: user.department,
           email: user.email,

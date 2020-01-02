@@ -23,6 +23,23 @@ const weworkRule = {
   code: 'string',
 };
 
+const configRule = {
+  advance: 'bool',
+  randomBtn: 'bool',
+  buffetBtn: 'bool',
+};
+
+
+const resetPswRule = {
+  oldPsw: 'string',
+  newPsw: {
+    type: 'string',
+    max: 22,
+    min: 8,
+    trim: true,
+  },
+};
+
 class UsersController extends Controller {
   async login() {
     const ctx = this.ctx;
@@ -81,6 +98,51 @@ class UsersController extends Controller {
     ctx.body = {
       code: 200,
       msg: '登录成功',
+    };
+
+  }
+
+  async userUpdateConfig() {
+    const ctx = this.ctx;
+    const userService = ctx.service.users;
+    const params = filterParams(ctx.request.body, configRule);
+    ctx.validate(configRule, params);
+    userService.updateUserConfig(params);
+    ctx.body = { code: 0, msg: '更新成功' };
+  }
+
+  async resetPsw() {
+    const ctx = this.ctx;
+    const userService = ctx.service.users;
+    const params = filterParams(ctx.request.body, resetPswRule);
+    ctx.validate(resetPswRule, params);
+    const userId = userService.getCurrentUserId();
+    const checkSuccess = await userService.validatePsw(params.oldPsw, {
+      _id: userId,
+    });
+    if (!checkSuccess) {
+      throw new HttpError({
+        code: 403,
+        msg: '用户名密码错误',
+      });
+    }
+    await userService.updatePsw(userId, params.newPsw);
+    ctx.body = { code: 0, msg: '更新成功，请重新登陆' };
+  }
+
+  async userProfile() {
+    const ctx = this.ctx;
+    const userService = ctx.service.users;
+    const userId = userService.getCurrentUserId();
+    const profile = await userService.getUserProfile(userId);
+    ctx.body = {
+      avatar: profile.avatar || '',
+      config: profile.config || {
+        advance: false,
+        randomBtn: false,
+        buffetBtn: true,
+      },
+      username: profile.username,
     };
   }
 }

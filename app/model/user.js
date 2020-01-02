@@ -2,6 +2,7 @@
 module.exports = app => {
   const mongoose = app.mongoose;
   const Schema = mongoose.Schema;
+
   const UserSchema = new Schema({
     username: {
       type: String,
@@ -30,9 +31,14 @@ module.exports = app => {
     },
     role: {
       type: Number,
+      default: 0,
+      immutable: true,
     },
     department: {
       type: String,
+    },
+    config: {
+      type: Schema.Types.Mixed,
     },
     createTime: {
       type: Date,
