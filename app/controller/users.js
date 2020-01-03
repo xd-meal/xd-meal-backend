@@ -74,7 +74,6 @@ class UsersController extends Controller {
     const userService = ctx.service.users;
     const weworkService = ctx.service.wework;
     const config = ctx.app.config;
-    let user = null;
     if (userService.isLoggedIn()) {
       throw new HttpError({
         code: 403,
@@ -89,7 +88,7 @@ class UsersController extends Controller {
       });
     }
     const userid = await weworkService.getUserID(params.code, params.corp);
-    user = await userService.weworkLogin(userid, params.corp);
+    await userService.weworkLogin(userid, params.corp);
     ctx.body = {
       code: 200,
       msg: '登录成功',
@@ -122,6 +121,7 @@ class UsersController extends Controller {
       });
     }
     await userService.updatePsw(userId, params.newPsw);
+    this.logout();
     ctx.body = { code: 0, msg: '更新成功，请重新登陆' };
   }
 

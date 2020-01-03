@@ -36,14 +36,30 @@ class UsersService extends Service {
       this.logger.info('unknow user:' + JSON.stringify(u));
       return false;
     }
+    if (u.wework_userid && u.wework_userid.length) {
+      throw new HttpError({
+        code: 403,
+        msg: '企业微信用户禁止使用密码',
+      });
+    }
     const pswSalt = u.psw_salt;
     const psw = u.password;
     const encodePsw = pswEncode(password, pswSalt).toString();
-    this.logger.info('success check user:' + JSON.stringify({
-      email: u.email,
-      id: u._id,
-    }));
-    return psw === encodePsw;
+    const result = psw === encodePsw;
+    if (result) {
+      this.logger.info('validatePsw: check passed with user: ', {
+        id: user._id,
+        username: user.username,
+        email: u.email,
+      });
+    } else {
+      this.logger.info('validatePsw: failed with user: ', {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      });
+    }
+    return result;
   }
 
   async passwordLogin(setting) {
@@ -77,18 +93,10 @@ class UsersService extends Service {
       id: user._id,
       username: user.username,
       email: user.email,
-      attempt_pwd: password,
     });
     throw new HttpError({
       code: 403,
       msg: '用户名或密码错误',
-    });
-  }
-  async loginOut() {
-    const ctx = this.ctx;
-    ctx.session.user = undefined;
-    ctx.cookies.set('XD-MEAL-SESSION', 0, {
-      expires: 'Thu, 01 Jan 1970 00:00:00 UTC',
     });
   }
 
@@ -234,7 +242,6 @@ class UsersService extends Service {
       password: encodePsw,
       psw_salt: pswHash,
     });
-    this.loginOut();
   }
 
   /**
