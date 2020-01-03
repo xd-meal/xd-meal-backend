@@ -8,6 +8,7 @@ module.exports = app => {
   const isAdmin = app.middleware.isAdmin;
   const isLoggedin = app.middleware.isLoggedin;
   const isAuthedPos = app.middleware.isAuthedPos;
+  const isModerator = app.middleware.isModerator;
 
   // login
   router.post('/api/v1/user/login', controller.users.login);
@@ -43,4 +44,7 @@ module.exports = app => {
   router.get('/api/v1/admin/users', isAdmin, controller.admin.users);
   router.get('/api/v1/admin/order/:startTime/:endTime', isAdmin, controller.admin.orderByUserIdAndTime);
   router.put('/api/v1/admin/dish/:id', isAdmin, controller.admin.updateDish);
+
+  // reports
+  router.post('/api/v1/report/order_count', isModerator, controller.report.orderCount);
 };
