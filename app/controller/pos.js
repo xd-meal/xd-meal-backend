@@ -34,13 +34,13 @@ class PosController extends Controller {
           msg: 'Token 无效',
         });
       }
-      if (!await ctx.service.orderToken.findByID(orderToken.orderId)) {
+      const order = await ctx.service.order.findByID(orderToken.orderId);
+      if (!order) {
         throw new HttpError({
           code: 403,
           msg: 'Token 无效',
         });
       }
-      const order = await ctx.service.order.findByID(orderToken.orderId);
       const user = await ctx.service.users.getUserProfile(orderToken.userId);
       await ctx.service.orderToken.setPicked(orderToken.orderId);
       ctx.body = {
