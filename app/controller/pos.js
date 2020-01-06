@@ -21,7 +21,7 @@ class PosController extends Controller {
       });
     }
     if (dining.stat_type === 0) {
-      ctx.service.orderToken.addOrder({
+      ctx.service.order.addOrder({
         userId: orderToken.userId,
         diningId: orderToken.diningId,
         menuId: 0,
@@ -42,7 +42,7 @@ class PosController extends Controller {
         });
       }
       const user = await ctx.service.users.getUserProfile(orderToken.userId);
-      await ctx.service.orderToken.setPicked(orderToken.orderId);
+      await ctx.service.order.setPicked(orderToken.orderId);
       ctx.body = {
         code: 0,
         msg: '已取餐',
