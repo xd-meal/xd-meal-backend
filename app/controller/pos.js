@@ -27,6 +27,15 @@ class PosController extends Controller {
         menuId: 0,
         picked: true,
       });
+      const user = await ctx.service.users.getUserProfile(orderToken.userId);
+      ctx.body = {
+        code: 0,
+        msg: '已取餐',
+        data: {
+          dining,
+          user,
+        },
+      };
     } else {
       if (!orderToken.orderId) {
         throw new HttpError({
@@ -42,6 +51,9 @@ class PosController extends Controller {
         });
       }
       const user = await ctx.service.users.getUserProfile(orderToken.userId);
+      const dish = dining.menu.find(el => {
+        return el._id === order.menu_id;
+      });
       await ctx.service.order.setPicked(orderToken.orderId);
       ctx.body = {
         code: 0,
@@ -49,6 +61,7 @@ class PosController extends Controller {
         data: {
           dining,
           order,
+          dish,
           user,
         },
       };
