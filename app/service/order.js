@@ -17,7 +17,7 @@ class OrderService extends Service {
     });
   }
   async findByID(orderID) {
-    return await this.ctx.model.Order.findOne({ _id: orderID });
+    return await this.ctx.model.Order.findById(orderID);
   }
   async deleteAllOrdersByDining(diningID) {
     return await this.ctx.model.Order.deleteMany({
