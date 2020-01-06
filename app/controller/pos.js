@@ -40,7 +40,7 @@ class PosController extends Controller {
           msg: 'Token 无效',
         });
       }
-      const user = ctx.service.users.getUserProfile(order.userId);
+      const user = await ctx.service.users.getUserProfile(order.userId);
       await ctx.service.order.setPicked(order.orderId);
       ctx.body = {
         code: 0,
