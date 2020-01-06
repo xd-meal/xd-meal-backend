@@ -52,7 +52,7 @@ class PosController extends Controller {
       }
       const user = await ctx.service.users.getUserProfile(orderToken.userId);
       const dish = dining.menu.find(el => {
-        return el._id === order.menu_id;
+        return el._id.toString() === order.menu_id.toString();
       });
       await ctx.service.order.setPicked(orderToken.orderId);
       ctx.body = {
