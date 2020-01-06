@@ -17,11 +17,17 @@ class DiningController extends Controller {
     };
   }
   async getAllUnpickedOrdered() {
-    const ordered = await this.ctx.service.order.getAllUnpickedOrdered(this.ctx.session.user._id);
-    const dinings = await this.ctx.service.dining.getDinings(ordered.reduce((acc, cur) => {
-      acc.push(cur.dining_id);
+    const dinings = await this.ctx.service.dining.getFuturePickable();
+    const diningIDs = dinings.reduce((acc, cur) => {
+      acc.push(cur._id);
       return acc;
-    }, []));
+    }, []);
+    const ordered = await this.ctx.service.order.getAllByUserAndDiningIDs(this.ctx.session.user._id, diningIDs);
+    // const ordered = await this.ctx.service.order.getAllUnpickedOrdered(this.ctx.session.user._id);
+    // const dinings = await this.ctx.service.dining.getDinings(ordered.reduce((acc, cur) => {
+    //   acc.push(cur.dining_id);
+    //   return acc;
+    // }, []));
     this.ctx.body = {
       ordered,
       dinings,

@@ -38,6 +38,12 @@ class OrderService extends Service {
       ],
     });
   }
+  async getAllByUserAndDiningIDs(userID, diningIDs) {
+    return await this.ctx.model.Order.find({
+      uid: userID,
+      dining_id: { $in: diningIDs },
+    });
+  }
   async batchOrder(userID, orders) {
     const ctx = this.ctx;
     const orderModel = ctx.model.Order;

@@ -150,6 +150,12 @@ class DiningService extends Service {
   async getDiningByID(diningID) {
     return await this.ctx.model.Dining.findById(diningID);
   }
+
+  async getFuturePickable() {
+    return this.ctx.model.Dining.find({
+      pick_end: { $gt: Date.now() },
+    });
+  }
 }
 
 module.exports = DiningService;
