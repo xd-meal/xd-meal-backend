@@ -1,6 +1,6 @@
 {
   "extends": ["eslint-config-egg", "standard"],
   "parserOptions": {
-    "ecmaVersion": 2019
+    "ecmaVersion": 2020
   }
 }
