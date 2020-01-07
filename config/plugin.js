@@ -1,4 +1,3 @@
-'use strict';
 
 /** @type Egg.EggPlugin */
 module.exports = {
@@ -9,24 +8,24 @@ module.exports = {
   // mongo db
   mongoose: {
     enable: true,
-    package: 'egg-mongoose',
+    package: 'egg-mongoose'
   },
   session: true,
   // 验证插件
   validate: {
     enable: true,
-    package: 'egg-validate',
+    package: 'egg-validate'
   },
   redis: {
     enable: true,
-    package: 'egg-redis',
+    package: 'egg-redis'
   },
   userrole: {
     enable: true,
-    package: 'egg-userrole',
+    package: 'egg-userrole'
   },
   sessionRedis: {
     enable: true,
-    package: 'egg-session-redis',
-  },
-};
+    package: 'egg-session-redis'
+  }
+}

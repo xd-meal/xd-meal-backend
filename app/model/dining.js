@@ -1,54 +1,54 @@
-'use strict';
+
 module.exports = app => {
-  const mongoose = app.mongoose;
-  const Schema = mongoose.Schema;
+  const mongoose = app.mongoose
+  const Schema = mongoose.Schema
   const DiningMenuItemSchema = new Schema(
     {
       _id: {
-        type: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId
       },
       title: {
-        type: String,
+        type: String
       },
       desc: {
-        type: String,
+        type: String
       },
       supplier: {
-        type: String,
-      },
+        type: String
+      }
     }
-  );
+  )
   const DiningSchema = new Schema({
     order_start: {
-      type: Date,
+      type: Date
     },
     order_end: {
-      type: Date,
+      type: Date
     },
     pick_start: {
-      type: Date,
+      type: Date
     },
     pick_end: {
-      type: Date,
+      type: Date
     },
     stat_type: {
       // 0 - 人数 1 参品
-      type: Number,
+      type: Number
     },
     menu: {
-      type: [ DiningMenuItemSchema ],
+      type: [DiningMenuItemSchema]
     },
 
     createTime: {
       type: Date,
-      default: Date.now,
+      default: Date.now
     },
     updateTime: {
       type: Date,
-      default: Date.now,
-    },
+      default: Date.now
+    }
   }, {
-    timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' },
-  });
-  return mongoose.model('Dining', DiningSchema, 'dining');
-};
+    timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
+  })
+  return mongoose.model('Dining', DiningSchema, 'dining')
+}
