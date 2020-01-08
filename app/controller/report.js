@@ -11,7 +11,10 @@ class ReportController extends Controller {
       endTime,
       stat_type: 1
     })
-    ctx.body = await ctx.service.report.getOrderCountByDinings(dinings)
+    ctx.body = await ctx.service.report.getOrderCountByDinings(dinings.reduce((acc, cur) => {
+      acc.push(cur._id)
+      return acc
+    }, []))
   }
 
   async userCount () {
@@ -23,7 +26,10 @@ class ReportController extends Controller {
       endTime,
       stat_type: 0
     })
-    ctx.body = await ctx.service.report.getUserCountByDinings(dinings)
+    ctx.body = await ctx.service.report.getUserCountByDinings(dinings.reduce((acc, cur) => {
+      acc.push(cur._id)
+      return acc
+    }, []))
   }
 }
 module.exports = ReportController
