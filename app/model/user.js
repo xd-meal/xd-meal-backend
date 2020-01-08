@@ -18,7 +18,8 @@ module.exports = app => {
       type: String
     },
     wechat_corpid: {
-      type: String
+      type: String,
+      required: true
     },
     email: {
       type: String,
