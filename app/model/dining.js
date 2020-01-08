@@ -38,6 +38,9 @@ module.exports = app => {
     menu: {
       type: [DiningMenuItemSchema]
     },
+    name: {
+      type: String
+    },
 
     createTime: {
       type: Date,
