@@ -1,13 +1,29 @@
 
 const Controller = require('egg').Controller
 
-const diningsArrayFilter = ['string']
-
 class ReportController extends Controller {
   async orderCount () {
     const ctx = this.ctx
-    ctx.validate(diningsArrayFilter, ctx.request.body)
-    ctx.body = await ctx.service.report.getOrderCount(ctx.request.body)
+    const startTime = ctx.params.startTime
+    const endTime = ctx.params.endTime
+    const dinings = await ctx.service.dining.findDiningByTime({
+      startTime,
+      endTime,
+      stat_type: 1
+    })
+    ctx.body = await ctx.service.report.getOrderCountByDinings(dinings)
+  }
+
+  async userCount () {
+    const ctx = this.ctx
+    const startTime = ctx.params.startTime
+    const endTime = ctx.params.endTime
+    const dinings = await ctx.service.dining.findDiningByTime({
+      startTime,
+      endTime,
+      stat_type: 0
+    })
+    ctx.body = await ctx.service.report.getUserCountByDinings(dinings)
   }
 }
 module.exports = ReportController
