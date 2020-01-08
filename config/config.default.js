@@ -56,6 +56,7 @@ module.exports = appInfo => {
       options: {
         useCreateIndex: true,
         useNewUrlParser: true,
+        useFindAndModify: false,
         useUnifiedTopology: true
       }
     }
