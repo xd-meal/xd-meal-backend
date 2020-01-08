@@ -314,7 +314,8 @@ class UsersService extends Service {
           department: user.department,
           email: user.email,
           password: pswEncode(psw, pswHash),
-          psw_salt: pswHash
+          psw_salt: pswHash,
+          wechat_corpid: user.wechat_corpid
         }
 
         backRes.push({

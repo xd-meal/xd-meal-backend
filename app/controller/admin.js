@@ -9,7 +9,7 @@ const userImportRule = {
     rule: {
       username: 'string',
       department: 'string',
-      corp: { type: 'string', required: false },
+      wechat_corpid: { type: 'string', required: true },
       email: 'string',
       password: { type: 'string', required: false }
     }
