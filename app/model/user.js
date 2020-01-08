@@ -18,7 +18,8 @@ module.exports = app => {
       type: String
     },
     wechat_corpid: {
-      type: String
+      type: String,
+      required: true
     },
     email: {
       type: String,
@@ -51,6 +52,6 @@ module.exports = app => {
   }, {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
-  UserSchema.index({ wework_userid: 1, wechat_corpid: 1 }, { unique: true })
+  UserSchema.index({ wework_userid: 1, wechat_corpid: 1 }, { unique: true, partialFilterExpression: { wework_userid: { $exists: true } } })
   return mongoose.model('User', UserSchema, 'user')
 }

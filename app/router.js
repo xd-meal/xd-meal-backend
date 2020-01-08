@@ -45,5 +45,6 @@ module.exports = app => {
   router.put('/api/v1/admin/dish/:id', isAdmin, controller.admin.updateDish)
 
   // reports
-  router.post('/api/v1/report/order_count', isModerator, controller.report.orderCount)
+  router.get('/api/v1/report/order_count/:startTime/:endTime', isModerator, controller.report.orderCount)
+  router.get('/api/v1/report/user_count/:startTime/:endTime', isModerator, controller.report.userCount)
 }

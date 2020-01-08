@@ -20,6 +20,13 @@ class OrderTokenService extends Service {
       return JSON.parse(data)
     }
   }
+
+  async delete (key) {
+    if (this.app.redis) {
+      const data = await this.app.redis.del('ORDER_' + key)
+      return data
+    }
+  }
 }
 
 module.exports = OrderTokenService

@@ -23,10 +23,11 @@ class PosController extends Controller {
       ctx.service.order.addOrder({
         userId: orderToken.userId,
         diningId: orderToken.diningId,
-        menuId: 0,
+        menuId: dining.menu[0]._id,
         picked: true
       })
       const user = await ctx.service.users.getUserProfile(orderToken.userId)
+      await ctx.service.orderToken.delete(ctx.params.token)
       ctx.body = {
         code: 0,
         msg: '已取餐',
@@ -54,6 +55,7 @@ class PosController extends Controller {
         return el._id.toString() === order.menu_id.toString()
       })
       await ctx.service.order.setPicked(orderToken.orderId)
+      await ctx.service.orderToken.delete(ctx.params.token)
       ctx.body = {
         code: 0,
         msg: '已取餐',
