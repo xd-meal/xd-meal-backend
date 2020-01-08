@@ -1,6 +1,7 @@
 
 const Service = require('egg').Service
 const HttpError = require('../helper/error')
+const ObjectId = require('mongoose').Types.ObjectId
 
 const commonFilter = {
   __v: 0
@@ -41,12 +42,12 @@ class DiningService extends Service {
     const ctx = this.ctx
     const DiningModel = ctx.model.Dining
     const DishModel = ctx.model.Dish
-    const findList = ding.menu.map(item => ({
-      _id: item
-    }))
-    const res = await DishModel.find({
-      $or: findList
-    }, commonFilter)
+    const findList = ding.menu.map(item => (ObjectId(item)))
+    const res = await DishModel.aggregate([
+      { $match: { _id: { $in: findList } } },
+      { $addFields: { __order: { $indexOfArray: [findList, '$_id'] } } },
+      { $sort: { __order: 1 } }
+    ])
     if (res.length !== findList.length) {
       this.logger.info('error menu id, findList:', ding.menu, 'resultList:', res.map(_ => _._id))
       throw new HttpError({
