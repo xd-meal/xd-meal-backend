@@ -40,6 +40,13 @@ class DishController extends Controller {
       }
     } else if (nonOrders.length) {
       const currentDining = nonOrders[0]
+      const order = await orderService.getByUserAndDiningID(ctx.session.user._id, currentDining._id)
+      if (order) {
+        throw new HttpError({
+          code: 404,
+          msg: '目前没有可取餐次'
+        })
+      }
       const token = await tokenService.generate(ctx.session.user._id, currentDining._id)
       ctx.body = {
         code: 200,

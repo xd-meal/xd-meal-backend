@@ -51,6 +51,13 @@ class OrderService extends Service {
     })
   }
 
+  async getByUserAndDiningID (userID, diningID) {
+    return this.ctx.model.Order.findOne({
+      uid: userID,
+      dining_id: diningID
+    })
+  }
+
   async batchOrder (userID, orders) {
     const ctx = this.ctx
     const orderModel = ctx.model.Order
