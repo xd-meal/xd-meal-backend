@@ -28,7 +28,7 @@ const updateDishRule = {
 }
 
 const addNewDiningRule = {
-  name: 'string',
+  title: 'string',
   order_start: 'number',
   order_end: 'number',
   pick_start: 'number',
