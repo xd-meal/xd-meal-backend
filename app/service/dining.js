@@ -30,7 +30,9 @@ class DiningService extends Service {
       pickEndTimeBeforeEndTime
     ]
     if (Object.prototype.hasOwnProperty.call(setting, 'stat_type')) {
-      params.stat_type = setting.stat_type
+      params.push({
+        stat_type: setting.stat_type
+      })
     }
     // 选取取餐时间开始大于选定时间头，而终止时间小于选定时间末尾
     return DiningModel.find({
