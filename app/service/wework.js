@@ -45,7 +45,7 @@ class WeWorkService extends Service {
       dataType: 'json'
     })
     if (result.data.errcode) {
-      this.logger.error('getUserID: Failed to get UserId, code: ' + code + ' corp: ' + corp)
+      this.logger.error('getUserID: Failed to get UserId, code: ' + code + ' corp: ' + corp + ' with response:\n', result)
       throw new HttpError({
         code: 403,
         msg: '获取企业微信 UserID 失败',
