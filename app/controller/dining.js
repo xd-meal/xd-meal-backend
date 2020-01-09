@@ -45,10 +45,10 @@ class DiningController extends Controller {
       const _index = dinings.findIndex(dining => {
         return (dining._id).toString() === (order.diningId).toString()
       })
-      this.logger.info('performOrder: request includes invalid dinings.' +
+      if (_index < 0) {
+        this.logger.info('performOrder: request includes invalid dinings.' +
         ' Orders: ' + JSON.stringify(orders) + '\nDinings: ' + JSON.stringify(dinings) + '\nCurrent' +
         ' items: ' + JSON.stringify(order))
-      if (_index < 0) {
         throw new HttpError({
           code: 403,
           msg: '点餐内容包含无效餐次'
