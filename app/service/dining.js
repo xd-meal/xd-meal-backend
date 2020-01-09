@@ -69,7 +69,7 @@ class DiningService extends Service {
         _id: _._id,
         title: _.title,
         desc: _.desc,
-        suppier: _.suppier
+        supplier: _.supplier
       }))
     })
   }
