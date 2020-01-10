@@ -110,7 +110,8 @@ class ReportService extends Service {
             $in: dinings.map(el => ObjectId(el))
           }
         }
-      }, {
+      },
+      {
         $lookup: {
           from: 'user',
           localField: 'uid',
@@ -122,28 +123,27 @@ class ReportService extends Service {
           path: '$userInfo'
         }
       }, {
-        $addFields: {
-          corp: '$userInfo.wechat_corpid'
-        }
-      }, {
         $match: {
-          corp
+          'userInfo.wechat_corpid': corp
         }
       }, {
-        $lookup: {
-          from: 'dish',
-          localField: 'menu_id',
-          foreignField: '_id',
-          as: 'dishInfo'
-        }
-      }, {
-        $unwind: {
-          path: '$dishInfo'
+        $group: {
+          _id: {
+            dining_id: '$dining_id',
+            dish_id: '$menu_id'
+          },
+          orders: {
+            $push: {
+              userInfo: '$userInfo',
+              picked: '$picked',
+              createTime: '$createTime'
+            }
+          }
         }
       }, {
         $lookup: {
           from: 'dining',
-          localField: 'dining_id',
+          localField: '_id.dining_id',
           foreignField: '_id',
           as: 'diningInfo'
         }
