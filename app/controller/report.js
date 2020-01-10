@@ -31,5 +31,21 @@ class ReportController extends Controller {
       return acc
     }, []))
   }
+
+  async userDetail () {
+    const ctx = this.ctx
+    const corp = ctx.params.corp
+    const startTime = ctx.params.startTime
+    const endTime = ctx.params.endTime
+    const dinings = await ctx.service.dining.findDiningByTime({
+      startTime,
+      endTime,
+      stat_type: 1
+    })
+    ctx.body = await ctx.service.report.getPersonalReport(dinings.reduce((acc, cur) => {
+      acc.push(cur._id)
+      return acc
+    }, []), corp)
+  }
 }
 module.exports = ReportController

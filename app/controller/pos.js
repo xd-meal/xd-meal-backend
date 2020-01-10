@@ -51,7 +51,7 @@ class PosController extends Controller {
         })
       }
       const user = await ctx.service.users.getUserProfile(orderToken.userId)
-      const dish = dining.menu.find(el => {
+      const dishIndex = dining.menu.findIndex(el => {
         return el._id.toString() === order.menu_id.toString()
       })
       await ctx.service.order.setPicked(orderToken.orderId)
@@ -62,7 +62,8 @@ class PosController extends Controller {
         data: {
           dining,
           order,
-          dish,
+          dishIndex,
+          dish: dining.menu[dishIndex],
           user
         }
       }

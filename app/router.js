@@ -47,4 +47,5 @@ module.exports = app => {
   // reports
   router.get('/api/v1/report/order_count/:startTime/:endTime', isModerator, controller.report.orderCount)
   router.get('/api/v1/report/user_count/:startTime/:endTime', isModerator, controller.report.userCount)
+  router.get('/api/v1/report/person_detail/:corp/:startTime/:endTime', isModerator, controller.report.userDetail)
 }
