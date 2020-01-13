@@ -20,7 +20,7 @@ class PosController extends Controller {
       })
     }
     if (dining.stat_type === 0) {
-      ctx.service.order.addOrder({
+      await ctx.service.order.addOrder({
         userId: orderToken.userId,
         diningId: orderToken.diningId,
         menuId: dining.menu[0]._id,
