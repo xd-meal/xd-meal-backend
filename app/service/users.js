@@ -271,7 +271,7 @@ class UsersService extends Service {
     const userModel = ctx.model.User
     const userId = (ctx.session.user && ctx.session.user._id).toString()
     if (this.userId !== '') {
-      const res = userModel.findOneAndUpdate(userId, {
+      const res = userModel.findByIdAndUpdate(userId, {
         config
       })
       if (res) {
