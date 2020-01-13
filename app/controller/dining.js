@@ -55,11 +55,11 @@ class DiningController extends Controller {
         })
       }
     })
-    ctx.service.order.deleteOrdersByUserAndDinigns(ctx.session.user._id, dinings.reduce((acc, cur) => {
+    await ctx.service.order.deleteOrdersByUserAndDinigns(ctx.session.user._id, dinings.reduce((acc, cur) => {
       acc.push(cur._id)
       return acc
     }, []))
-    ctx.service.order.batchOrder(ctx.session.user._id, orders)
+    await ctx.service.order.batchOrder(ctx.session.user._id, orders)
     ctx.body = {
       code: 0
     }
