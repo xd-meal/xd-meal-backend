@@ -28,6 +28,7 @@ module.exports = app => {
   // dining
   router.get('/api/v1/dining/list', isLoggedin, controller.dining.getAllOrderable)
   router.post('/api/v1/order', isLoggedin, controller.dining.performOrder)
+  router.put('/api/v1/order/:id/hate', isLoggedin, controller.dining.toggleVoteDown)
 
   // pos machine endpoints
   router.get('/api/v1/token/:token', isAuthedPos, controller.pos.performPick)

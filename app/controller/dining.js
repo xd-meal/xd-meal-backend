@@ -34,6 +34,27 @@ class DiningController extends Controller {
     }
   }
 
+  async toggleVoteDown () {
+    const ctx = this.ctx
+    const orderId = ctx.params.id
+    if (!orderId) {
+      throw new HttpError({
+        code: 402,
+        msg: '必须指定订单id'
+      })
+    }
+    const isVoteDown = Boolean(ctx.request.body.isVoteDown)
+    const order = await ctx.service.order.updateOrderVoteDown(isVoteDown, orderId, ctx.session.user._id)
+    console.log(order)
+    if (!order) {
+      throw new HttpError({
+        code: 402,
+        msg: `不存在指定订单号：${orderId}`
+      })
+    }
+    ctx.body = {}
+  }
+
   async performOrder () {
     const ctx = this.ctx
     const orders = ctx.request.body

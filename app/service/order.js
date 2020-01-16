@@ -1,6 +1,6 @@
 
 const Service = require('egg').Service
-// const HttpError = require('../helper/error');
+const HttpError = require('../helper/error');
 
 class OrderService extends Service {
   async findOrderByUserAndDiningIDs (userID, diningIDs) {
@@ -49,6 +49,26 @@ class OrderService extends Service {
       uid: userID,
       dining_id: { $in: diningIDs }
     })
+  }
+
+  async updateOrderVoteDown (status, orderId, userId) {
+    let order;
+    try {
+      order = await this.ctx.model.Order.findOneAndUpdate({
+        _id: orderId,
+        uid: userId
+      }, {
+        isVoteDown: Boolean(status)
+      }, {
+        new: true
+      })
+    } catch (e) {
+      throw new HttpError({
+        code: 403,
+        msg: `非法 id ${orderId}`
+      })
+    }
+    return order
   }
 
   async getByUserAndDiningID (userID, diningID) {

@@ -15,6 +15,9 @@ module.exports = app => {
     picked: {
       type: Boolean
     },
+    isVoteDown: {
+      type: Boolean
+    },
     createTime: {
       type: Date,
       default: Date.now
