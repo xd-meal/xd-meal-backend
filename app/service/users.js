@@ -86,6 +86,9 @@ class UsersService extends Service {
         username: user.username,
         email: user.email
       })
+      user.password = undefined
+      user.psw_salt = undefined
+      console.log(user)
       ctx.session.user = user
       return user
     }
