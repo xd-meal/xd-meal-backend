@@ -16,23 +16,21 @@ module.exports = appInfo => {
   // add your middleware config here
   config.middleware = []
   // add your user config here
-  const userConfig = {
-    security: {
-      csrf: {
-        enable: false
-      }
-    },
-    validate: {}
+  config.security = {
+    csrf: {
+      enable: false
+    }
   }
-  config.redis = {
-    client: {
-      port: 6379, // Redis port
-      host: '127.0.0.1', // Redis host
-      password: 'auth',
-      db: 0
-    },
-    agent: true
-  }
+  config.validate = {}
+  // config.redis = {
+  //   client: {
+  //     port: 6379, // Redis port
+  //     host: '127.0.0.1', // Redis host
+  //     password: 'auth',
+  //     db: 0
+  //   },
+  //   agent: true
+  // }
   config.wework = {
     secret: {
       xd: '',
@@ -52,7 +50,7 @@ module.exports = appInfo => {
   }
   config.mongoose = {
     client: {
-      url: 'mongodb://127.0.0.1/example',
+      // url: 'mongodb://127.0.0.1/example',
       options: {
         useCreateIndex: true,
         useNewUrlParser: true,
@@ -66,6 +64,7 @@ module.exports = appInfo => {
   }
   config.session = {
     key: 'XD-MEAL-SESSION',
+    maxAge: 30 * 3600 * 1000,
     // XXX: 不确定是否有安全问题，前端需要获取以判断登陆情况
     httpOnly: false,
     renew: true
@@ -75,7 +74,6 @@ module.exports = appInfo => {
   }
   return {
     ...config,
-    ...userConfig,
     notfound: {
       pageUrl: '/404'
     },
