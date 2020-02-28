@@ -125,17 +125,14 @@ class UsersController extends Controller {
 
   async userProfile () {
     const ctx = this.ctx
-    const userService = ctx.service.users
-    const userId = userService.getCurrentUserId()
-    const profile = await userService.getUserProfile(userId)
     ctx.body = {
-      avatar: profile.avatar || '',
-      config: profile.config || {
+      avatar: '',
+      config: {
         advance: false,
         randomBtn: false,
         buffetBtn: true
       },
-      username: profile.username
+      ...ctx.session.user
     }
   }
 }
