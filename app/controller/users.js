@@ -26,7 +26,8 @@ const weworkRule = {
 const configRule = {
   advance: 'bool',
   randomBtn: 'bool',
-  buffetBtn: 'bool'
+  buffetBtn: 'bool',
+  ppx: 'bool'
 }
 
 const resetPswRule = {
@@ -130,7 +131,8 @@ class UsersController extends Controller {
       config: {
         advance: false,
         randomBtn: false,
-        buffetBtn: true
+        buffetBtn: true,
+        ppx: false
       },
       ...ctx.session.user
     }
