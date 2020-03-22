@@ -26,7 +26,9 @@ const weworkRule = {
 const configRule = {
   advance: 'bool',
   randomBtn: 'bool',
-  buffetBtn: 'bool'
+  buffetBtn: 'bool',
+  randomForNoSpicy: 'bool',
+  randomForEmpty: 'bool'
 }
 
 const resetPswRule = {
