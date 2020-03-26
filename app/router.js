@@ -33,7 +33,7 @@ module.exports = app => {
   router.get('/api/v1/token/:token', isAuthedPos, controller.pos.performPick)
 
   // admin
-  router.post('/api/v1/admin/user/list', isAdmin, controller.admin.userList)
+  router.post('/api/v1/admin/user/list', isModerator, controller.admin.userList)
   router.get('/api/v1/admin/dish/list', isAdmin, controller.admin.dishList)
   router.post('/api/v1/admin/dish', isAdmin, controller.admin.newDish)
   router.get('/api/v1/admin/dining/:startTime/:endTime', isAdmin, controller.admin.diningByTime)

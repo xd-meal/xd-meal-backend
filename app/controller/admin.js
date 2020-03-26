@@ -1,5 +1,6 @@
 
 const Controller = require('egg').Controller
+const HttpError = require('../helper/error')
 const filterParams = require('../helper/filter')
 
 const userImportRule = {
@@ -52,6 +53,14 @@ class AdminController extends Controller {
     const userService = ctx.service.users
     const params = filterParams(ctx.request.body, userImportRule)
     ctx.validate(userImportRule, params)
+    if (ctx.session.user.role < 2) {
+      if (params.list.filter(el => el.wechat_corpid !== ctx.session.user.wechat_corpid).length) {
+        throw new HttpError({
+          code: 403,
+          msg: '分管只能添加同企业帐号'
+        })
+      }
+    }
     ctx.body = await userService.importList(params.list)
   }
 
