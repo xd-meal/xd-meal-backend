@@ -20,26 +20,11 @@ class ReportService extends Service {
           as: 'userInfo'
         }
       }, {
-        $unwind: {
-          path: '$userInfo'
-        }
-      }, {
-        $lookup: {
-          from: 'dining',
-          localField: 'dining_id',
-          foreignField: '_id',
-          as: 'diningInfo'
-        }
-      }, {
-        $unwind: {
-          path: '$diningInfo'
-        }
-      }, {
         $group: {
           _id: {
-            dining: '$diningInfo',
+            dining: '$dining_id',
             menu_id: '$menu_id',
-            corp: '$userInfo.wechat_corpid'
+            corp: { $arrayElemAt: ['$userInfo.wechat_corpid', 0] }
           },
           count: {
             $sum: 1
@@ -55,6 +40,17 @@ class ReportService extends Service {
               count: '$count'
             }
           }
+        }
+      }, {
+        $lookup: {
+          from: 'dining',
+          localField: '_id',
+          foreignField: '_id',
+          as: '_id'
+        }
+      }, {
+        $unwind: {
+          path: '$_id'
         }
       }
     ])
