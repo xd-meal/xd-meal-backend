@@ -159,25 +159,6 @@ class UsersService extends Service {
   }
 
   /**
-   * @description 判断用户是否是admin，如果不是 admin 直接跑出异常并终止程序，调用时请注意
-   * @return {Promise<void>} 无返回值
-   */
-  async isAdmin () {
-    const ctx = this.ctx
-    const app = ctx.app
-    const parts = ctx.get('Authorization').split(' ')
-    const data = app.jwt.decode(parts[1])
-    const id = data.sub
-    const user = await ctx.model.User.findById(id)
-    if (user.role !== 2) {
-      throw new HttpError({
-        code: 403,
-        msg: 'No Permission'
-      })
-    }
-  }
-
-  /**
    * @description 判断用户是否已登录
    * @return {Boolean} 是否已登录
    */
