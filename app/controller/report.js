@@ -1,5 +1,6 @@
 
 const Controller = require('egg').Controller
+const HttpError = require('../helper/error')
 
 class ReportController extends Controller {
   async orderCount () {
@@ -37,6 +38,14 @@ class ReportController extends Controller {
     const corp = ctx.params.corp
     const startTime = ctx.params.startTime
     const endTime = ctx.params.endTime
+    if (ctx.session.user.role < 2) {
+      if (corp !== ctx.session.user.wechat_corpid) {
+        throw new HttpError({
+          code: 403,
+          msg: '分管只能查询同企业下的点餐记录'
+        })
+      }
+    }
     const dinings = await ctx.service.dining.findDiningByTime({
       startTime,
       endTime,
