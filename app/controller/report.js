@@ -48,8 +48,7 @@ class ReportController extends Controller {
     }
     const dinings = await ctx.service.dining.findDiningByTime({
       startTime,
-      endTime,
-      stat_type: 1
+      endTime
     })
     ctx.body = await ctx.service.report.getPersonalReport(dinings.reduce((acc, cur) => {
       acc.push(cur._id)
