@@ -120,7 +120,7 @@ class UsersService extends Service {
     try {
       user = await ctx.model.User.findOne({
         wework_userid: userid,
-        wechat_corpid: corp
+        corp
       })
     } catch (error) {
       this.logger.info(error)
@@ -132,7 +132,7 @@ class UsersService extends Service {
     this.logger.info('weworkLogin: User logged in. ' + {
       id: user._id,
       username: user.username,
-      wechat_corpid: user.wechat_corpid,
+      corp: user.corp,
       wework_userid: user.wework_userid
     })
     ctx.session.user = user
@@ -144,7 +144,8 @@ class UsersService extends Service {
     const params = {
       username: userInfo.name,
       wework_userid: userInfo.userid,
-      wechat_corpid: corp,
+      corp,
+      channel: corp,
       role: 0,
       department: 1,
       avatar: userInfo.avatar
@@ -299,7 +300,8 @@ class UsersService extends Service {
           email: user.email,
           password: pswEncode(psw, pswHash),
           psw_salt: pswHash,
-          wechat_corpid: user.wechat_corpid
+          corp: user.corp,
+          channel: user.corp
         }
 
         backRes.push({

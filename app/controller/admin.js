@@ -10,7 +10,8 @@ const userImportRule = {
     rule: {
       username: 'string',
       department: 'string',
-      wechat_corpid: { type: 'string', required: true },
+      corp: { type: 'string', required: true },
+      channel: 'string',
       email: 'string',
       password: { type: 'string', required: false }
     }
@@ -54,7 +55,7 @@ class AdminController extends Controller {
     const params = filterParams(ctx.request.body, userImportRule)
     ctx.validate(userImportRule, params)
     if (ctx.session.user.role < 2) {
-      if (params.list.filter(el => el.wechat_corpid !== ctx.session.user.wechat_corpid).length) {
+      if (params.list.filter(el => el.corp !== ctx.session.user.channel).length) {
         throw new HttpError({
           code: 403,
           msg: '分管只能添加同企业帐号'

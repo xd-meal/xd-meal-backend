@@ -24,7 +24,7 @@ class ReportService extends Service {
           _id: {
             dining: '$dining_id',
             menu_id: '$menu_id',
-            corp: { $arrayElemAt: ['$userInfo.wechat_corpid', 0] }
+            corp: { $arrayElemAt: ['$userInfo.channel', 0] }
           },
           count: {
             $sum: 1
@@ -76,7 +76,7 @@ class ReportService extends Service {
       }, {
         $group: {
           _id: {
-            corp: { $arrayElemAt: ['$userInfo.wechat_corpid', 0] }
+            corp: { $arrayElemAt: ['$userInfo.channel', 0] }
           },
           count: {
             $sum: 1
@@ -152,7 +152,7 @@ class ReportService extends Service {
     if (corp !== 'all') {
       _aggregation.splice(2, 0, {
         $match: {
-          'userInfo.wechat_corpid': corp
+          'userInfo.channel': corp
         }
       })
     }
