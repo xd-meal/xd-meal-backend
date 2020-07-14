@@ -70,6 +70,10 @@ class WeWorkService extends Service {
     }
     return result.data
   }
+
+  async sendRollWinnerMsg (userListByCorp) {
+    console.log(userListByCorp)
+  }
 }
 
 module.exports = WeWorkService

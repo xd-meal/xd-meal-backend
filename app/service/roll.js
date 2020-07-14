@@ -40,7 +40,6 @@ class RollService extends Service {
         continue
       }
       const orderEnd = thisDining.order_end
-      console.log(orderEnd.getTime())
       if (orderEnd && orderEnd.getTime() > Date.now()) {
         this.logger.info('Dining order is not finished yet, continue', diningId)
         continue
@@ -57,10 +56,19 @@ class RollService extends Service {
         rollSession.startTransaction()
         userSession.startTransaction()
         try {
-          let winArr = []
+          const winArr = []
           const loseArr = []
           if (currentMealRoll.users.length <= currentMealRoll.meal.limit) {
-            winArr = currentMealRoll.users.map(_ => _._id)
+            currentMealRoll.users.forEach(user => {
+              winArr.push(user._id)
+              if (user.wework_userid) {
+                if (!globalWin[user.corp]) {
+                  globalWin[user.corp] = new Set()
+                }
+                globalWin[user.corp].add(user.wework_userid)
+              }
+            })
+            this.logger.error('No enough user in this roll, assigning directly', winArr)
           } else {
             currentMealRoll.users.forEach(user => {
               if (user.is_vip) {
@@ -76,9 +84,9 @@ class RollService extends Service {
               winArr.push(el._id.toString())
               if (el.wework_userid) {
                 if (!globalWin[el.corp]) {
-                  global[el.corp] = new Set()
+                  globalWin[el.corp] = new Set()
                 }
-                global[el.corp].add(el.wework_userid)
+                globalWin[el.corp].add(el.wework_userid)
               }
             })
             currentMealRoll.users.forEach(el => {
@@ -102,6 +110,7 @@ class RollService extends Service {
         }
       }
       await ctx.service.dining.setRequireRoll(diningId, false)
+      await redis.del(rollDinings[index])
     }
     await redis.del('xdmeal_is_rolling')
     ctx.service.wework.sendRollWinnerMsg(globalWin)
