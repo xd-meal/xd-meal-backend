@@ -165,6 +165,23 @@ class AdminController extends Controller {
     ctx.validate(updateDishRule, params)
     ctx.body = await dishService.updateDish(params, id)
   }
+
+  async updateUserChannel () {
+    const ctx = this.ctx
+    const userSvc = ctx.service.users
+    const params = ctx.request.body
+    const res = await userSvc.setChannel(params.userid, params.channel)
+    if (res) {
+      ctx.body = {
+        code: 0
+      }
+    } else {
+      ctx.body = {
+        code: 400,
+        msg: '未知错误'
+      }
+    }
+  }
 }
 
 module.exports = AdminController
