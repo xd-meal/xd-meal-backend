@@ -24,7 +24,7 @@ class ReportService extends Service {
           _id: {
             dining: '$dining_id',
             menu_id: '$menu_id',
-            corp: { $arrayElemAt: ['$userInfo.wechat_corpid', 0] }
+            channel: { $arrayElemAt: ['$userInfo.channel', 0] }
           },
           count: {
             $sum: 1
@@ -36,7 +36,7 @@ class ReportService extends Service {
           stat: {
             $push: {
               menu_id: '$_id.menu_id',
-              corp: '$_id.corp',
+              channel: '$_id.channel',
               count: '$count'
             }
           }
@@ -76,7 +76,7 @@ class ReportService extends Service {
       }, {
         $group: {
           _id: {
-            corp: { $arrayElemAt: ['$userInfo.wechat_corpid', 0] }
+            channel: { $arrayElemAt: ['$userInfo.channel', 0] }
           },
           count: {
             $sum: 1
@@ -85,14 +85,14 @@ class ReportService extends Service {
       }, {
         $project: {
           _id: 0,
-          corp: '$_id.corp',
+          channel: '$_id.channel',
           count: '$count'
         }
       }
     ])
   }
 
-  async getPersonalReport (dinings, corp) {
+  async getPersonalReport (dinings, channel) {
     const ctx = this.ctx
     const OrderModel = ctx.model.Order
     const _aggregation = [
@@ -149,10 +149,10 @@ class ReportService extends Service {
         }
       }
     ]
-    if (corp !== 'all') {
+    if (channel !== 'all') {
       _aggregation.splice(2, 0, {
         $match: {
-          'userInfo.wechat_corpid': corp
+          'userInfo.channel': channel
         }
       })
     }

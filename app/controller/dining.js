@@ -45,6 +45,15 @@ class DiningController extends Controller {
       const _index = dinings.findIndex(dining => {
         return (dining._id).toString() === (order.diningId).toString()
       })
+      if (dinings[_index].menu.find(el => el._id.toString() === order.menuId).limit) {
+        this.logger.info('performOrder: request includes limit dinings.' +
+      ' Orders: ' + JSON.stringify(orders) + '\nDinings: ' + JSON.stringify(dinings) + '\nCurrent' +
+      ' items: ' + JSON.stringify(order))
+        throw new HttpError({
+          code: 403,
+          msg: '注意点！我知道你想干什么！'
+        })
+      }
       if (_index < 0) {
         this.logger.info('performOrder: request includes invalid dinings.' +
         ' Orders: ' + JSON.stringify(orders) + '\nDinings: ' + JSON.stringify(dinings) + '\nCurrent' +

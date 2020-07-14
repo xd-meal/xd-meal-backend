@@ -1,17 +1,17 @@
 module.exports = app => {
   const mongoose = app.mongoose
   const Schema = mongoose.Schema
-  const OrderSchema = new Schema({
-    uid: {
-      type: Schema.Types.ObjectId
-    },
+  const RollSchema = new Schema({
     dining_id: {
       type: Schema.Types.ObjectId
     },
     menu_id: {
       type: Schema.Types.ObjectId
     },
-    picked: {
+    uid: {
+      type: Schema.Types.ObjectId
+    },
+    hit: {
       type: Boolean,
       default: false
     },
@@ -26,6 +26,6 @@ module.exports = app => {
   }, {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
-  OrderSchema.index({ uid: 1, dining_id: 1 }, { unique: true })
-  return mongoose.model('Order', OrderSchema, 'order')
+  RollSchema.index({ dining_id: 1, uid: 1 }, { unique: true })
+  return mongoose.model('Roll', RollSchema, 'roll')
 }

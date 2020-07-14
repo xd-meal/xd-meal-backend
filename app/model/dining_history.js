@@ -58,5 +58,5 @@ module.exports = app => {
   }, {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
-  return mongoose.model('Dining', DiningSchema, 'dining')
+  return mongoose.model('DiningHistory', DiningSchema, 'dining_history')
 }

@@ -10,7 +10,8 @@ const userImportRule = {
     rule: {
       username: 'string',
       department: 'string',
-      wechat_corpid: { type: 'string', required: true },
+      corp: { type: 'string', required: true },
+      channel: 'string',
       email: 'string',
       password: { type: 'string', required: false }
     }
@@ -38,6 +39,9 @@ const addNewDiningRule = {
   menu: {
     type: 'array',
     itemType: 'string'
+  },
+  limits: {
+    type: 'object'
   }
 }
 
@@ -54,7 +58,7 @@ class AdminController extends Controller {
     const params = filterParams(ctx.request.body, userImportRule)
     ctx.validate(userImportRule, params)
     if (ctx.session.user.role < 2) {
-      if (params.list.filter(el => el.wechat_corpid !== ctx.session.user.wechat_corpid).length) {
+      if (params.list.filter(el => el.channel !== ctx.session.user.channel).length) {
         throw new HttpError({
           code: 403,
           msg: '分管只能添加同企业帐号'
@@ -100,7 +104,11 @@ class AdminController extends Controller {
     const diningService = ctx.service.dining
     const params = filterParams(ctx.request.body, addNewDiningRule)
     ctx.validate(addNewDiningRule, params)
-    ctx.body = await diningService.addNewDining(params)
+    const res = await diningService.addNewDining(params)
+    if (res.requireRoll) {
+      ctx.app.redis.set('dining_roll_' + res._id, res.order_end.getTime())
+    }
+    ctx.body = res
   }
 
   // 更新餐次 PUt /admin/dining/:id
@@ -121,6 +129,7 @@ class AdminController extends Controller {
     const id = ctx.params.id
     await diningService.deleteDiningById(id)
     await orderService.deleteAllOrdersByDining(id)
+    ctx.app.redis.del('dining_roll_' + id)
     ctx.body = {
       id
     }
@@ -155,6 +164,23 @@ class AdminController extends Controller {
     const params = filterParams(ctx.request.body, updateDishRule)
     ctx.validate(updateDishRule, params)
     ctx.body = await dishService.updateDish(params, id)
+  }
+
+  async updateUserChannel () {
+    const ctx = this.ctx
+    const userSvc = ctx.service.users
+    const params = ctx.request.body
+    const res = await userSvc.setChannel(params.userid, params.channel)
+    if (res) {
+      ctx.body = {
+        code: 0
+      }
+    } else {
+      ctx.body = {
+        code: 400,
+        msg: '未知错误'
+      }
+    }
   }
 }
 

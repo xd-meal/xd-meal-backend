@@ -29,6 +29,10 @@ module.exports = app => {
   router.get('/api/v1/dining/list', isLoggedin, controller.dining.getAllOrderable)
   router.post('/api/v1/order', isLoggedin, controller.dining.performOrder)
 
+  // roll
+  router.get('/api/v2/dining/roll', isLoggedin, controller.roll.getRollList)
+  router.put('/api/v2/dining/roll', isLoggedin, controller.roll.updateRollList)
+
   // pos machine endpoints
   router.get('/api/v1/token/:token', isAuthedPos, controller.pos.performPick)
 
@@ -43,9 +47,10 @@ module.exports = app => {
   router.get('/api/v1/admin/users', isAdmin, controller.admin.users)
   router.get('/api/v1/admin/order/:startTime/:endTime', isAdmin, controller.admin.orderByUserIdAndTime)
   router.put('/api/v1/admin/dish/:id', isAdmin, controller.admin.updateDish)
+  router.put('/api/v2/admin/user/channel', isAdmin, controller.admin.updateUserChannel)
 
   // reports
   router.get('/api/v1/report/order_count/:startTime/:endTime', isModerator, controller.report.orderCount)
   router.get('/api/v1/report/user_count/:startTime/:endTime', isModerator, controller.report.userCount)
-  router.get('/api/v1/report/person_detail/:corp/:startTime/:endTime', isModerator, controller.report.userDetail)
+  router.get('/api/v1/report/person_detail/:channel/:startTime/:endTime', isModerator, controller.report.userDetail)
 }

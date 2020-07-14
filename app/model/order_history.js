@@ -12,8 +12,7 @@ module.exports = app => {
       type: Schema.Types.ObjectId
     },
     picked: {
-      type: Boolean,
-      default: false
+      type: Boolean
     },
     createTime: {
       type: Date,
@@ -27,5 +26,5 @@ module.exports = app => {
     timestamps: { createdAt: 'createTime', updatedAt: 'updateTime' }
   })
   OrderSchema.index({ uid: 1, dining_id: 1 }, { unique: true })
-  return mongoose.model('Order', OrderSchema, 'order')
+  return mongoose.model('OrderHistory', OrderSchema, 'order_history')
 }

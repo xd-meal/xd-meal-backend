@@ -88,7 +88,6 @@ class UsersService extends Service {
       })
       user.password = undefined
       user.psw_salt = undefined
-      console.log(user)
       ctx.session.user = user
       return user
     }
@@ -120,7 +119,7 @@ class UsersService extends Service {
     try {
       user = await ctx.model.User.findOne({
         wework_userid: userid,
-        wechat_corpid: corp
+        corp
       })
     } catch (error) {
       this.logger.info(error)
@@ -132,7 +131,7 @@ class UsersService extends Service {
     this.logger.info('weworkLogin: User logged in. ' + {
       id: user._id,
       username: user.username,
-      wechat_corpid: user.wechat_corpid,
+      corp: user.corp,
       wework_userid: user.wework_userid
     })
     ctx.session.user = user
@@ -144,7 +143,8 @@ class UsersService extends Service {
     const params = {
       username: userInfo.name,
       wework_userid: userInfo.userid,
-      wechat_corpid: corp,
+      corp,
+      channel: corp,
       role: 0,
       department: 1,
       avatar: userInfo.avatar
@@ -299,7 +299,8 @@ class UsersService extends Service {
           email: user.email,
           password: pswEncode(psw, pswHash),
           psw_salt: pswHash,
-          wechat_corpid: user.wechat_corpid
+          corp: user.corp,
+          channel: user.channel || user.corp
         }
 
         backRes.push({
@@ -331,6 +332,68 @@ class UsersService extends Service {
       }
     }
     return backRes
+  }
+
+  async batchAddLuckyBonus (userIds, increacement = 5, session) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    return userModel.updateMany(
+      { _id: { $in: userIds } },
+      { $inc: { lucky_bonus: increacement } },
+      { session }
+    )
+  }
+
+  async batchSetLuckyBonus (userIds, value, session) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    return userModel.updateMany(
+      { _id: { $in: userIds } },
+      { $set: { lucky_bonus: value } },
+      { session }
+    )
+  }
+
+  async setLuckyBonus (userId, luckyBonus) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        lucky_bonus: luckyBonus
+      })
+      if (res) {
+        return res
+      }
+    }
+    return false
+  }
+
+  async setVip (userId, isVip) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        is_vip: isVip
+      })
+      if (res) {
+        return res
+      }
+    }
+    return false
+  }
+
+  async setChannel (userId, channel) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        channel
+      })
+      if (res) {
+        return res
+      }
+    }
+    return false
   }
 }
 

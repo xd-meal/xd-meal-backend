@@ -105,6 +105,23 @@ class OrderService extends Service {
       picked: true
     })
   }
+
+  async rollBatchReplaceDish (userIds, diningId, menuId, session) {
+    const ctx = this.ctx
+    const orderModel = ctx.model.Order
+    for (let index = 0; index < userIds.length; index++) {
+      const userId = userIds[index]
+      await orderModel.updateOne({
+        uid: userId,
+        dining_id: diningId
+      }, {
+        menu_id: menuId
+      }, {
+        session,
+        upsert: true
+      })
+    }
+  }
 }
 
 module.exports = OrderService
