@@ -1,4 +1,3 @@
-
 module.exports = app => {
   const mongoose = app.mongoose
   const Schema = mongoose.Schema
@@ -13,7 +12,8 @@ module.exports = app => {
       type: Schema.Types.ObjectId
     },
     picked: {
-      type: Boolean
+      type: Boolean,
+      default: false
     },
     createTime: {
       type: Date,
