@@ -34,11 +34,11 @@ class ReportController extends Controller {
 
   async userDetail () {
     const ctx = this.ctx
-    const corp = ctx.params.corp
+    const channel = ctx.params.channel
     const startTime = ctx.params.startTime
     const endTime = ctx.params.endTime
     if (ctx.session.user.role < 2) {
-      if (corp !== ctx.session.user.channel) {
+      if (channel !== ctx.session.user.channel) {
         throw new HttpError({
           code: 403,
           msg: '分管只能查询同企业下的点餐记录'
@@ -52,7 +52,7 @@ class ReportController extends Controller {
     ctx.body = await ctx.service.report.getPersonalReport(dinings.reduce((acc, cur) => {
       acc.push(cur._id)
       return acc
-    }, []), corp)
+    }, []), channel)
   }
 }
 module.exports = ReportController
