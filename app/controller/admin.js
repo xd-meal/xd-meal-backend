@@ -39,6 +39,9 @@ const addNewDiningRule = {
   menu: {
     type: 'array',
     itemType: 'string'
+  },
+  limits: {
+    type: 'object'
   }
 }
 
@@ -55,7 +58,7 @@ class AdminController extends Controller {
     const params = filterParams(ctx.request.body, userImportRule)
     ctx.validate(userImportRule, params)
     if (ctx.session.user.role < 2) {
-      if (params.list.filter(el => el.corp !== ctx.session.user.channel).length) {
+      if (params.list.filter(el => el.channel !== ctx.session.user.channel).length) {
         throw new HttpError({
           code: 403,
           msg: '分管只能添加同企业帐号'
@@ -101,7 +104,11 @@ class AdminController extends Controller {
     const diningService = ctx.service.dining
     const params = filterParams(ctx.request.body, addNewDiningRule)
     ctx.validate(addNewDiningRule, params)
-    ctx.body = await diningService.addNewDining(params)
+    const res = await diningService.addNewDining(params)
+    if (res.requireRoll) {
+      ctx.app.redis.set('dining_roll_' + res._id, res.order_end.getTime())
+    }
+    ctx.body = res
   }
 
   // 更新餐次 PUt /admin/dining/:id
@@ -122,6 +129,7 @@ class AdminController extends Controller {
     const id = ctx.params.id
     await diningService.deleteDiningById(id)
     await orderService.deleteAllOrdersByDining(id)
+    ctx.app.redis.del('dining_roll_' + id)
     ctx.body = {
       id
     }

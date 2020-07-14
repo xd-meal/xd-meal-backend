@@ -1,4 +1,3 @@
-
 module.exports = app => {
   const mongoose = app.mongoose
   const Schema = mongoose.Schema
@@ -44,6 +43,14 @@ module.exports = app => {
     },
     config: {
       type: Schema.Types.Mixed
+    },
+    lucky_bonus: {
+      type: Number,
+      default: 0
+    },
+    is_vip: {
+      type: Boolean,
+      default: false
     },
     createTime: {
       type: Date,

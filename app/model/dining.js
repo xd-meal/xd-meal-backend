@@ -1,4 +1,3 @@
-
 module.exports = app => {
   const mongoose = app.mongoose
   const Schema = mongoose.Schema
@@ -15,6 +14,9 @@ module.exports = app => {
       },
       supplier: {
         type: String
+      },
+      limit: {
+        type: Number
       }
     }
   )
@@ -41,7 +43,10 @@ module.exports = app => {
     title: {
       type: String
     },
-
+    requireRoll: {
+      type: Boolean,
+      default: false
+    },
     createTime: {
       type: Date,
       default: Date.now

@@ -88,7 +88,6 @@ class UsersService extends Service {
       })
       user.password = undefined
       user.psw_salt = undefined
-      console.log(user)
       ctx.session.user = user
       return user
     }
@@ -301,7 +300,7 @@ class UsersService extends Service {
           password: pswEncode(psw, pswHash),
           psw_salt: pswHash,
           corp: user.corp,
-          channel: user.corp
+          channel: user.channel || user.corp
         }
 
         backRes.push({
@@ -333,6 +332,68 @@ class UsersService extends Service {
       }
     }
     return backRes
+  }
+
+  async batchAddLuckyBonus (userIds, increacement = 5, session) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    return userModel.updateMany(
+      { _id: { $in: userIds } },
+      { $inc: { lucky_bonus: increacement } },
+      { session }
+    )
+  }
+
+  async batchSetLuckyBonus (userIds, value, session) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    return userModel.updateMany(
+      { _id: { $in: userIds } },
+      { $set: { lucky_bonus: value } },
+      { session }
+    )
+  }
+
+  async setLuckyBonus (userId, luckyBonus) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        lucky_bonus: luckyBonus
+      })
+      if (res) {
+        return res
+      }
+    }
+    return false
+  }
+
+  async setVip (userId, isVip) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        is_vip: isVip
+      })
+      if (res) {
+        return res
+      }
+    }
+    return false
+  }
+
+  async setChannel (userId, channel) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        channel
+      })
+      if (res) {
+        return res
+      }
+    }
+    return false
   }
 }
 

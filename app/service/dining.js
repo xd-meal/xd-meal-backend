@@ -40,46 +40,48 @@ class DiningService extends Service {
     })
   }
 
-  async addNewDining (ding) {
+  async addNewDining (dining) {
     const ctx = this.ctx
     const DiningModel = ctx.model.Dining
     const DishModel = ctx.model.Dish
-    const findList = ding.menu.map(item => (ObjectId(item)))
+    const findList = dining.menu.map(item => (ObjectId(item)))
     const res = await DishModel.aggregate([
       { $match: { _id: { $in: findList } } },
       { $addFields: { __order: { $indexOfArray: [findList, '$_id'] } } },
       { $sort: { __order: 1 } }
     ])
     if (res.length !== findList.length) {
-      this.logger.info('error menu id, findList:', ding.menu, 'resultList:', res.map(_ => _._id))
+      this.logger.info('error menu id, findList:', dining.menu, 'resultList:', res.map(_ => _._id))
       throw new HttpError({
         code: 403,
         msg: '存在错误的 menu id',
-        data: { findList: ding.menu, result: res.map(_ => _._id) }
+        data: { findList: dining.menu, result: res.map(_ => _._id) }
       })
     }
     return DiningModel.create({
-      title: ding.title,
-      order_start: ding.order_start,
-      order_end: ding.order_end,
-      pick_start: ding.pick_start,
-      pick_end: ding.pick_end,
-      stat_type: ding.stat_type,
+      title: dining.title,
+      order_start: dining.order_start,
+      order_end: dining.order_end,
+      pick_start: dining.pick_start,
+      pick_end: dining.pick_end,
+      stat_type: dining.stat_type,
+      requireRoll: Object.values(dining.limits).findIndex(el => el > 0) > -1,
       menu: res.map(_ => ({
         _id: _._id,
         title: _.title,
         desc: _.desc,
-        supplier: _.supplier
+        supplier: _.supplier,
+        limit: dining.limits[_._id]
       }))
     })
   }
 
-  async updateDining (ding, id) {
+  async updateDining (dining, id) {
     const ctx = this.ctx
     const DiningModel = ctx.model.Dining
     const DishModel = ctx.model.Dish
     // TODO: 重复操作合并
-    const findList = ding.menu.map(item => ({
+    const findList = dining.menu.map(item => ({
       _id: item
     }))
     const res = await DishModel.find({
@@ -89,15 +91,15 @@ class DiningService extends Service {
       throw new HttpError({
         code: 403,
         msg: '存在错误的 menu id',
-        data: { findList: ding.menu, result: res.map(_ => _._id) }
+        data: { findList: dining.menu, result: res.map(_ => _._id) }
       })
     }
     return DiningModel.findByIdAndUpdate(id, {
-      order_start: ding.order_start,
-      order_end: ding.order_end,
-      pick_start: ding.pick_start,
-      pick_end: ding.pick_end,
-      stat_type: ding.stat_type,
+      order_start: dining.order_start,
+      order_end: dining.order_end,
+      pick_start: dining.pick_start,
+      pick_end: dining.pick_end,
+      stat_type: dining.stat_type,
       menu: res.map(_ => ({
         _id: _._id,
         title: _.title,
@@ -161,6 +163,14 @@ class DiningService extends Service {
   async getFuturePickable () {
     return this.ctx.model.Dining.find({
       pick_end: { $gt: Date.now() }
+    })
+  }
+
+  async setRequireRoll (diningId, requireRoll = false) {
+    return this.ctx.model.Dining.updateOne({
+      _id: diningId
+    }, {
+      requireRoll
     })
   }
 }
