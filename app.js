@@ -20,19 +20,20 @@ class AppBootHook {
   }
 
   async didReady () {
-    const config = this.ctx.app.config
+    const config = this.app.config
+    const ctx = this.app.createAnonymousContext()
     if (!config.wework || !config.wework.corpID) {
       return
     }
     const corps = Object.keys(config.wework.corpID || {})
-    try {
-      for (let index = 0; index < corps.length; index++) {
+    for (let index = 0; index < corps.length; index++) {
+      try {
         const corp = corps[index]
-        const accessToken = await this.ctx.service.wework.getAccessToken(corp)
+        const accessToken = await ctx.service.wework.getAccessToken(corp)
         if (!config.wework.agentID[corp] || !config.wework.agentID[corp].length) {
           continue
         }
-        await this.ctx.curl(
+        await this.app.curl(
           'https://qyapi.weixin.qq.com/cgi-bin/menu/create?access_token=' +
         accessToken +
         '&agentid=' +
@@ -54,9 +55,9 @@ class AppBootHook {
             dataType: 'json'
           }
         )
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
     }
   }
 }
