@@ -72,7 +72,38 @@ class WeWorkService extends Service {
   }
 
   async sendRollWinnerMsg (userListByCorp) {
-    console.log(userListByCorp)
+    const queue = []
+    const config = this.ctx.app.config
+    for (const corp in userListByCorp) {
+      if (Object.prototype.hasOwnProperty.call(userListByCorp, corp)) {
+        const users = Array.from(userListByCorp[corp])
+        while (users.length) {
+          const _d = {
+            touser: '',
+            msgtype: 'text',
+            agentid: 0,
+            text: {
+              content: '恭喜你成功获取了限量菜品\n\n请前往点餐页面确认下周菜单~'
+            }
+          }
+          _d.touser = users.splice(0, 1000).join('|')
+          _d.agentid = config.wework.agentID[corp]
+          queue.push({
+            data: _d,
+            token: await this.ctx.service.wework.getAccessToken(corp)
+          })
+        }
+      }
+    }
+    for (let index = 0; index < queue.length; index++) {
+      const job = queue[index]
+      await this.ctx.curl('https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=' + job.token, {
+        method: 'POST',
+        contentType: 'json',
+        data: job.data,
+        dataType: 'json'
+      })
+    }
   }
 }
 
