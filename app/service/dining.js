@@ -58,6 +58,13 @@ class DiningService extends Service {
         data: { findList: dining.menu, result: res.map(_ => _._id) }
       })
     }
+    if (Object.values(dining.limits).findIndex(el => el < 0) > -1) {
+      throw new HttpError({
+        code: 403,
+        msg: '存在错误的数量限制',
+        data: { findList: dining.menu, limits: dining.limits }
+      })
+    }
     return DiningModel.create({
       title: dining.title,
       order_start: dining.order_start,
