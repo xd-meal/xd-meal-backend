@@ -96,6 +96,7 @@ class RollService extends Service {
           await ctx.service.users.batchAddLuckyBonus(loseArr, 5, userSession)
           await ctx.service.users.batchSetLuckyBonus(winArr, 0, userSession)
           await ctx.service.order.rollBatchReplaceDish(winArr, diningId, currentMealRoll.meal._id, orderSession)
+          await this.batchSetRollTicketHit(winArr, diningId, currentMealRoll.meal._id, true, rollSession)
           await orderSession.commitTransaction()
           await rollSession.commitTransaction()
           await userSession.commitTransaction()
@@ -227,13 +228,27 @@ class RollService extends Service {
     }
   }
 
-  async setRollTicketHit (userId, diningId, menuId, hit = false) {
+  async setRollTicketHit (userId, diningId, menuId, hit = false, session) {
     return this.ctx.model.Roll.updateOne({
       uid: userId,
       dining_id: diningId,
       menu_id: menuId
     }, {
       hit
+    }, {
+      session
+    })
+  }
+
+  async batchSetRollTicketHit (userIds, diningId, menuId, hit = false, session) {
+    return this.ctx.model.Roll.updateMany({
+      uid: { $in: userIds },
+      dining_id: diningId,
+      menu_id: menuId
+    }, {
+      hit
+    }, {
+      session
     })
   }
 
