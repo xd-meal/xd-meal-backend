@@ -395,6 +395,14 @@ class UsersService extends Service {
     }
     return false
   }
+  
+  async getUserByNfcUid (nfc_uid) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    return userModel.findOne({
+      nfc_uid
+    })
+  }
 }
 
 module.exports = UsersService
