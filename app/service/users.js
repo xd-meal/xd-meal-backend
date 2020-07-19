@@ -390,6 +390,24 @@ class UsersService extends Service {
         channel
       })
       if (res) {
+        delete res.password
+        delete res.psw_salt
+        return res
+      }
+    }
+    return false
+  }
+
+  async setNfcUid (userId, nfc_uid) {
+    const ctx = this.ctx
+    const userModel = ctx.model.User
+    if (userId !== '') {
+      const res = userModel.findByIdAndUpdate(userId, {
+        nfc_uid
+      })
+      if (res) {
+        delete res.password
+        delete res.psw_salt
         return res
       }
     }

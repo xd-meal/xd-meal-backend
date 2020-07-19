@@ -137,6 +137,23 @@ class UsersController extends Controller {
       ...ctx.session.user
     }
   }
+
+  async updateUserNfcUid () {
+    const ctx = this.ctx
+    const params = ctx.request.body
+    const res = await ctx.service.users.setNfcUid(params.user_id, params.nfc_uid)
+    if (res) {
+      ctx.body = {
+        code: 0,
+        msg: '更新成功'
+      }
+    } else {
+      ctx.body = {
+        code: 403,
+        msg: '更新失败'
+      }
+    }
+  }
 }
 
 module.exports = UsersController

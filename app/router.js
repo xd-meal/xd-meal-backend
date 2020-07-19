@@ -35,7 +35,7 @@ module.exports = app => {
 
   // pos machine endpoints
   router.get('/api/v1/token/:token', isAuthedPos, controller.pos.performPick)
-  router.get('/api/v1/nfc/:nfcuid', isAuthedPos, controller.pos.pickByNfcUid)
+  router.get('/api/v2/nfc/:nfcuid', isAuthedPos, controller.pos.pickByNfcUid)
 
   // admin
   router.post('/api/v1/admin/user/list', isModerator, controller.admin.userList)
