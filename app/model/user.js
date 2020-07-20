@@ -25,7 +25,10 @@ module.exports = app => {
       required: true
     },
     nfc_uid: {
-      type: Number
+      type: Number,
+      unique: true,
+      trim: true,
+      sparse: true
     },
     email: {
       type: String,
