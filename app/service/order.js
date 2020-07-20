@@ -115,7 +115,8 @@ class OrderService extends Service {
         uid: userId,
         dining_id: diningId
       }, {
-        menu_id: menuId
+        menu_id: menuId,
+        picked: false
       }, {
         session,
         upsert: true
