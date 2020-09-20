@@ -111,24 +111,44 @@ class ConcertoService extends Service {
       canvasCtx.textBaseline = 'top'
       canvasCtx.fillStyle = 'white'
       canvasCtx.strokeStyle = 'white'
-      canvasCtx.fillText(list[0], 960, 778)
-      canvasCtx.fillText(list[1], 960, 848)
-      canvasCtx.fillText(list[2], 960, 918)
-      canvasCtx.fillText([list[3], list[4], list[5]].join('  '), 960, 988)
-      canvasCtx.strokeText(list[0], 960, 778)
-      canvasCtx.strokeText(list[1], 960, 848)
-      canvasCtx.strokeText(list[2], 960, 918)
-      canvasCtx.strokeText([list[3], list[4], list[5]].join('  '), 960, 988)
+      let _list = [...list]
+      for (let index = 0; index < _list.length; index++) {
+        if (index >= 3) {
+          canvasCtx.fillText(_list.join('  '), 960, 988)
+          break
+        }
+        const element = _list[index]
+        canvasCtx.fillText(element.shift(), 960, 778 + 70 * index)
+      }
+      _list = [...list]
+      for (let index = 0; index < _list.length; index++) {
+        if (index >= 3) {
+          canvasCtx.strokeText(_list.join('  '), 960, 988)
+          break
+        }
+        const element = _list[index]
+        canvasCtx.strokeText(element.shift(), 960, 778 + 70 * index)
+      }
       canvasCtx.fillStyle = '#554f5b'
       canvasCtx.strokeStyle = '#554f5b'
-      canvasCtx.fillText(list[0], 960, 780)
-      canvasCtx.fillText(list[1], 960, 850)
-      canvasCtx.fillText(list[2], 960, 920)
-      canvasCtx.fillText([list[3], list[4], list[5]].join('  '), 960, 990)
-      canvasCtx.strokeText(list[0], 960, 780)
-      canvasCtx.strokeText(list[1], 960, 850)
-      canvasCtx.strokeText(list[2], 960, 920)
-      canvasCtx.strokeText([list[3], list[4], list[5]].join('  '), 960, 990)
+      _list = [...list]
+      for (let index = 0; index < _list.length; index++) {
+        if (index >= 3) {
+          canvasCtx.fillText(_list.join('  '), 960, 990)
+          break
+        }
+        const element = _list[index]
+        canvasCtx.fillText(element.shift(), 960, 780 + 70 * index)
+      }
+      _list = [...list]
+      for (let index = 0; index < _list.length; index++) {
+        if (index >= 3) {
+          canvasCtx.strokeText(_list.join('  '), 960, 990)
+          break
+        }
+        const element = _list[index]
+        canvasCtx.strokeText(element.shift(), 960, 780 + 70 * index)
+      }
     }
     return canvas.toBuffer('image/jpeg')
     // const out = fs.createWriteStream(path.join('concerto_test', dishIndex + '.jpg'))
