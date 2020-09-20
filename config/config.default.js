@@ -72,6 +72,7 @@ module.exports = appInfo => {
   config.pos = {
     keys: []
   }
+  config.skipMealID = ''
   return {
     ...config,
     notfound: {
