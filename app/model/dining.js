@@ -47,6 +47,10 @@ module.exports = app => {
       type: Boolean,
       default: false
     },
+    posterGenerated: {
+      type: Boolean,
+      default: false
+    },
     createTime: {
       type: Date,
       default: Date.now

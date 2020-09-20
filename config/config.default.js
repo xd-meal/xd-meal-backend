@@ -73,6 +73,22 @@ module.exports = appInfo => {
     keys: []
   }
   config.skipMealID = ''
+  config.mysql = {
+    client: {
+      host: '',
+      port: '3306',
+      user: '',
+      password: '',
+      database: 'concerto'
+    },
+    app: true
+  }
+  config.concerto = [
+    // {
+    //   item: 0,
+    //   feed: 0
+    // }
+  ]
   return {
     ...config,
     notfound: {

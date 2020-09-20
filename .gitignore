@@ -15,3 +15,6 @@ config/*.prod.js
 
 data
 dump.rdb
+
+concerto/*
+!concerto/.gitkeep

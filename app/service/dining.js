@@ -180,6 +180,14 @@ class DiningService extends Service {
       requireRoll
     })
   }
+
+  async setPosterGenerated (diningId) {
+    return this.ctx.model.Dining.updateOne({
+      _id: diningId
+    }, {
+      posterGenerated: true
+    })
+  }
 }
 
 module.exports = DiningService
