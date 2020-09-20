@@ -194,7 +194,7 @@ class AdminController extends Controller {
         code: 403,
         msg: '指定餐次海报已生成'
       })
-    // }
+    }
     ctx.body = await concertoService.InjectByDiningItem(diningItem)
     await diningService.setPosterGenerated(diningID)
   }
