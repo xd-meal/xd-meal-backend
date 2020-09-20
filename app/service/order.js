@@ -1,5 +1,6 @@
 
 const Service = require('egg').Service
+const ObjectId = require('mongoose').Types.ObjectId
 // const HttpError = require('../helper/error');
 
 class OrderService extends Service {
@@ -101,6 +102,18 @@ class OrderService extends Service {
   async setPicked (orderId) {
     return this.ctx.model.Order.findOneAndUpdate({
       _id: orderId
+    }, {
+      picked: true
+    })
+  }
+
+  async setSkipMealPicked () {
+    if (!this.app.config.skipMealID || !this.app.config.skipMealID.length) {
+      return
+    }
+    return this.ctx.model.Order.updateMany({
+      menu_id: ObjectId(this.app.config.skipMealID),
+      picked: false
     }, {
       picked: true
     })
