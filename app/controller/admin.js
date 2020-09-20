@@ -182,6 +182,22 @@ class AdminController extends Controller {
       }
     }
   }
+
+  async injectPoster () {
+    const ctx = this.ctx
+    const diningID = ctx.params.diningID
+    const diningService = ctx.service.dining
+    const concertoService = ctx.service.concerto
+    const diningItem = await diningService.getDiningByID(diningID)
+    if (diningItem.posterGenerated) {
+      throw new HttpError({
+        code: 403,
+        msg: '指定餐次海报已生成'
+      })
+    // }
+    ctx.body = await concertoService.InjectByDiningItem(diningItem)
+    await diningService.setPosterGenerated(diningID)
+  }
 }
 
 module.exports = AdminController

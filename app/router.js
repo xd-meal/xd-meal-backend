@@ -49,6 +49,7 @@ module.exports = app => {
   router.get('/api/v1/admin/order/:startTime/:endTime', isAdmin, controller.admin.orderByUserIdAndTime)
   router.put('/api/v1/admin/dish/:id', isAdmin, controller.admin.updateDish)
   router.put('/api/v2/admin/user/channel', isAdmin, controller.admin.updateUserChannel)
+  router.get('/api/v2/admin/poster/:diningID', controller.admin.injectPoster)
 
   // reports
   router.get('/api/v1/report/order_count/:startTime/:endTime', isModerator, controller.report.orderCount)
