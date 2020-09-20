@@ -117,8 +117,8 @@ class ConcertoService extends Service {
           canvasCtx.fillText(_list.join('  '), 960, 988)
           break
         }
-        const element = _list[index]
-        canvasCtx.fillText(element.shift(), 960, 778 + 70 * index)
+        const element = _list.shift()
+        canvasCtx.fillText(element, 960, 778 + 70 * index)
       }
       _list = [...list]
       for (let index = 0; index < _list.length; index++) {
@@ -126,8 +126,8 @@ class ConcertoService extends Service {
           canvasCtx.strokeText(_list.join('  '), 960, 988)
           break
         }
-        const element = _list[index]
-        canvasCtx.strokeText(element.shift(), 960, 778 + 70 * index)
+        const element = _list.shift()
+        canvasCtx.strokeText(element, 960, 778 + 70 * index)
       }
       canvasCtx.fillStyle = '#554f5b'
       canvasCtx.strokeStyle = '#554f5b'
@@ -137,8 +137,8 @@ class ConcertoService extends Service {
           canvasCtx.fillText(_list.join('  '), 960, 990)
           break
         }
-        const element = _list[index]
-        canvasCtx.fillText(element.shift(), 960, 780 + 70 * index)
+        const element = _list.shift()
+        canvasCtx.fillText(element, 960, 780 + 70 * index)
       }
       _list = [...list]
       for (let index = 0; index < _list.length; index++) {
@@ -146,8 +146,8 @@ class ConcertoService extends Service {
           canvasCtx.strokeText(_list.join('  '), 960, 990)
           break
         }
-        const element = _list[index]
-        canvasCtx.strokeText(element.shift(), 960, 780 + 70 * index)
+        const element = _list.shift()
+        canvasCtx.strokeText(element, 960, 780 + 70 * index)
       }
     }
     return canvas.toBuffer('image/jpeg')
