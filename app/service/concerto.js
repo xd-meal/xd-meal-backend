@@ -112,7 +112,7 @@ class ConcertoService extends Service {
       canvasCtx.fillStyle = 'white'
       canvasCtx.strokeStyle = 'white'
       let _list = [...list]
-      for (let index = 0; index < _list.length; index++) {
+      for (let index = 0; _list.length; index++) {
         if (index >= 3) {
           canvasCtx.fillText(_list.join('  '), 960, 988)
           break
@@ -121,7 +121,7 @@ class ConcertoService extends Service {
         canvasCtx.fillText(element, 960, 778 + 70 * index)
       }
       _list = [...list]
-      for (let index = 0; index < _list.length; index++) {
+      for (let index = 0; _list.length; index++) {
         if (index >= 3) {
           canvasCtx.strokeText(_list.join('  '), 960, 988)
           break
@@ -132,7 +132,7 @@ class ConcertoService extends Service {
       canvasCtx.fillStyle = '#554f5b'
       canvasCtx.strokeStyle = '#554f5b'
       _list = [...list]
-      for (let index = 0; index < _list.length; index++) {
+      for (let index = 0; _list.length; index++) {
         if (index >= 3) {
           canvasCtx.fillText(_list.join('  '), 960, 990)
           break
@@ -141,7 +141,7 @@ class ConcertoService extends Service {
         canvasCtx.fillText(element, 960, 780 + 70 * index)
       }
       _list = [...list]
-      for (let index = 0; index < _list.length; index++) {
+      for (let index = 0; _list.length; index++) {
         if (index >= 3) {
           canvasCtx.strokeText(_list.join('  '), 960, 990)
           break
@@ -150,9 +150,9 @@ class ConcertoService extends Service {
         canvasCtx.strokeText(element, 960, 780 + 70 * index)
       }
     }
-    return canvas.toBuffer('image/jpeg')
     // const out = fs.createWriteStream(path.join('concerto_test', dishIndex + '.jpg'))
     // await canvas.createJPEGStream().pipe(out)
+    return canvas.toBuffer('image/jpeg')
   }
 }
 module.exports = ConcertoService
