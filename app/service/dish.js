@@ -10,7 +10,8 @@ class DishService extends Service {
   async dishList () {
     const ctx = this.ctx
     const dishModel = ctx.model.Dish
-    return dishModel.find({}, commonFilter).limit(1000)
+    // TODO: migrate to remote search
+    return dishModel.find({}, commonFilter)
   }
 
   async addDish (dish) {
