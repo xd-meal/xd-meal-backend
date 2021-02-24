@@ -89,6 +89,10 @@ module.exports = appInfo => {
     //   feed: 0
     // }
   ]
+  config.slack = {
+    channel: '',
+    token: ''
+  }
   return {
     ...config,
     notfound: {
