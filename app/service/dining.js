@@ -172,10 +172,10 @@ class DiningService extends Service {
     startDate.setMinutes(0)
     startDate.setSeconds(0)
     startDate.setMilliseconds(0)
-    endDate.setHours(0)
-    endDate.setMinutes(0)
-    endDate.setSeconds(0)
-    endDate.setMilliseconds(0)
+    endDate.setHours(23)
+    endDate.setMinutes(59)
+    endDate.setSeconds(59)
+    endDate.setMilliseconds(999)
     return this.ctx.model.Dining.find({
       $and: [
         { pick_start: { $gte: startDate } },
