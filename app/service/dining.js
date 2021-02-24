@@ -157,6 +157,33 @@ class DiningService extends Service {
     })
   }
 
+  async getDiningsByDate (date) {
+    if (!(date instanceof Date)) {
+      this.logger.info('argument is not an instance of Date')
+      throw new HttpError({
+        code: 403,
+        msg: '参数类型错误',
+        data: date
+      })
+    }
+    const startDate = new Date(date)
+    const endDate = new Date(date)
+    startDate.setHours(0)
+    startDate.setMinutes(0)
+    startDate.setSeconds(0)
+    startDate.setMilliseconds(0)
+    endDate.setHours(23)
+    endDate.setMinutes(59)
+    endDate.setSeconds(59)
+    endDate.setMilliseconds(999)
+    return this.ctx.model.Dining.find({
+      $and: [
+        { pick_start: { $gte: startDate } },
+        { pick_end: { $lte: endDate } }
+      ]
+    })
+  }
+
   async getDinings (diningIDs) {
     return this.ctx.model.Dining.find({
       _id: { $in: diningIDs }
