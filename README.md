@@ -1,11 +1,3 @@
 # xd-meal-backend
 
-##  项目依赖
-
-### redis
-
-可以使用命令  `redis-server` 启动 redis
-
-### mongodb
-
-mongodb 需要使用 run-rs 方式运行，所以这里可以使用预制的 yarn dbStart 命令启动
+由于涉及到其它系统的访问，考虑到外部系统的安全性不可控，以及防止盲猜命中外部系统选型进行针对性攻击等问题，后续版本转移至内网 git
